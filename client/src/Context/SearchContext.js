@@ -1,9 +1,13 @@
 import { createContext, useReducer } from "react";
 
 const INITIAL_STATE = {
-  departureStation: undefined, // Starting point of the journey
-  arrivalStation: undefined, // Destination of the journey
-  journeyDate: undefined, // Date of travel
+  city: undefined,
+  dates: [],
+  options: {
+    adult: undefined,
+    children: undefined,
+    room: undefined,
+  },
 };
 
 export const SearchContext = createContext(INITIAL_STATE);
@@ -11,12 +15,7 @@ export const SearchContext = createContext(INITIAL_STATE);
 const SearchReducer = (state, action) => {
   switch (action.type) {
     case "NEW_SEARCH":
-      return {
-        ...state,
-        departureStation: action.payload.departureStation,
-        arrivalStation: action.payload.arrivalStation,
-        journeyDate: action.payload.journeyDate,
-      };
+      return action.payload;
     case "RESET_SEARCH":
       return INITIAL_STATE;
     default:
@@ -27,12 +26,16 @@ const SearchReducer = (state, action) => {
 export const SearchContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(SearchReducer, INITIAL_STATE);
 
+  // Log the current state and dispatch function
+  console.log("SearchContext Provider State:", state);
+  console.log("SearchContext Dispatch Function:", dispatch);
+
   return (
     <SearchContext.Provider
       value={{
-        departureStation: state.departureStation,
-        arrivalStation: state.arrivalStation,
-        journeyDate: state.journeyDate,
+        city: state.city,
+        dates: state.dates,
+        options: state.options,
         dispatch,
       }}
     >

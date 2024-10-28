@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  countByFirstStation,
   createBus,
   deleteBus,
   getAllBuses,
@@ -20,9 +21,11 @@ router.put("/:id", verifyAdmin, updateBus);
 router.delete("/:id", verifyAdmin, deleteBus);
 
 //get bus
-router.get("/:id", getBus);
+router.get("/find/:id", getBus);
 
 //get all buses
 router.get("/", getAllBuses);
+
+router.get("/countByFirstStation", countByFirstStation);
 
 export default router;

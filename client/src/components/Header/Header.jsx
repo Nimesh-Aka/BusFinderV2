@@ -1,40 +1,65 @@
 import {
   faBus,
+  faBed,
   faCalendarDays,
-  faLocationArrow,
+  faCar,
+  faPerson,
+  faPlane,
+  faTaxi,
+  faMapMarkedAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./Header.css";
-import DatePicker from "react-datepicker";
+//import { DateRange } from "react-date-range";
 import { useContext, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import { useDispatch } from "react-redux";
-
-// theme css file
+import "react-date-range/dist/styles.css"; // main css file
+import "react-date-range/dist/theme/default.css"; // theme css file
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { SearchContext } from "../../Context/SearchContext";
 import { AuthContext } from "../../Context/AuthContext";
 
 const Header = ({ type }) => {
-  const [departureStation, setDepartureStation] = useState("");
-  const [arrivalStation, setArrivalStation] = useState("");
+  const [destination, setDestination] = useState("");
+  const [lastDestination, setLastDestination] = useState("");
   const [openDate, setOpenDate] = useState(false);
-  const [journeyDate, setJourneyDate] = useState(new Date());
+  const [dates, setDates] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(),
+      key: "selection",
+    },
+  ]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const [openOptions, setOpenOptions] = useState(false);
+  const [options, setOptions] = useState({
+    adult: 1,
+    children: 0,
+    room: 1,
+  });
 
   const navigate = useNavigate();
-
   const { user } = useContext(AuthContext);
+
+  const handleOption = (name, operation) => {
+    setOptions((prev) => {
+      return {
+        ...prev,
+        [name]: operation === "i" ? options[name] + 1 : options[name] - 1,
+      };
+    });
+  };
 
   const { dispatch } = useContext(SearchContext);
 
   const handleSearch = () => {
     dispatch({
       type: "NEW_SEARCH",
-      payload: { departureStation, arrivalStation, journeyDate },
+      payload: { destination, lastDestination, selectedDate, options },
     });
     navigate("/buses", {
-      state: { departureStation, arrivalStation, journeyDate },
+      state: { destination, lastDestination, selectedDate, options },
     });
   };
 
@@ -45,36 +70,52 @@ const Header = ({ type }) => {
           type === "list" ? "headerContainer listMode" : "headerContainer"
         }
       >
+        <div className="headerList">
+          <div className="headerListItem active">
+            <FontAwesomeIcon icon={faBus} />
+            <span>Buses</span>
+          </div>
+          <div className="headerListItem">
+            <FontAwesomeIcon icon={faCalendarDays} />
+            <span>Schedule</span>
+          </div>
+          <div className="headerListItem">
+            <FontAwesomeIcon icon={faPerson} />
+            <span>Passenger Info</span>
+          </div>
+          <div className="headerListItem">
+            <FontAwesomeIcon icon={faMapMarkedAlt} />
+            <span>Destinations</span>
+          </div>
+        </div>
         {type !== "list" && (
           <>
-            <h1 className="headerTitle">Book Your Bus Journey Easily</h1>
+            <h1 className="headerTitle">Plan Your Journey with Ease</h1>
             <p className="headerDesc">
-              Find and book bus tickets online for your next trip with ease.
+              Discover your perfect bus journey with great prices and flexible
+              options!
             </p>
             {!user && <button className="headerBtn">Sign in / Register</button>}
+
             <div className="headerSearch">
               <div className="headerSearchItem">
-                <FontAwesomeIcon
-                  icon={faLocationArrow}
-                  className="headerIcon"
-                />
+                <FontAwesomeIcon icon={faMapMarkedAlt} className="headerIcon" />
+
                 <input
                   type="text"
-                  placeholder="Departure Station"
+                  placeholder="Enter your departure station?"
                   className="headerSearchInput"
-                  onChange={(e) => setDepartureStation(e.target.value)}
+                  onChange={(e) => setDestination(e.target.value)}
                 />
               </div>
               <div className="headerSearchItem">
-                <FontAwesomeIcon
-                  icon={faLocationArrow}
-                  className="headerIcon"
-                />
+                <FontAwesomeIcon icon={faMapMarkedAlt} className="headerIcon" />
+
                 <input
                   type="text"
-                  placeholder="Arrival Station"
+                  placeholder="Enter your arrival station?"
                   className="headerSearchInput"
-                  onChange={(e) => setArrivalStation(e.target.value)}
+                  onChange={(e) => setLastDestination(e.target.value)}
                 />
               </div>
               <div className="headerSearchItem">
@@ -82,21 +123,22 @@ const Header = ({ type }) => {
                 <span
                   onClick={() => setOpenDate(!openDate)}
                   className="headerSearchText"
-                >{`${format(journeyDate, "MM/dd/yyyy")}`}</span>
+                >
+                  {format(selectedDate, "MM/dd/yyyy")}
+                </span>
                 {openDate && (
-                  <DatePicker
-                    selected={journeyDate}
-                    editableDateInputs={true}
-                    onChange={(day) => setJourneyDate(day)}
-                    dateFormat="MM/dd/yyyy"
-                    className="date"
-                    minDate={new Date()}
+                  <input
+                    type="date"
+                    value={format(selectedDate, "yyyy-MM-dd")}
+                    onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                    className="dateInput"
+                    min={format(new Date(), "yyyy-MM-dd")}
                   />
                 )}
               </div>
               <div className="headerSearchItem">
                 <button className="headerBtn" onClick={handleSearch}>
-                  Find Buses
+                  Search
                 </button>
               </div>
             </div>
