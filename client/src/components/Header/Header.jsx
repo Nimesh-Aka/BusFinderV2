@@ -95,7 +95,7 @@ const Header = ({ type }) => {
               Discover your perfect bus journey with great prices and flexible
               options!
             </p>
-            {!user && <button className="headerBtn">Sign in / Register</button>}
+            {!user && <button className="headerBtn" onClick={() => navigate('/sign-up')}>Register</button>}
 
             <div className="headerSearch">
               <div className="headerSearchItem">
