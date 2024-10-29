@@ -20,11 +20,15 @@ import Reserve from "../../components/Reserve/Reserve";
 const Hotel = () => {
   const location = useLocation();
   const id = location.pathname.split("/")[2];
+
   const [slideNumber, setSlideNumber] = useState(0);
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
   const { data, loading, error } = useFetch(`/buses/find/${id}`);
+
+  console.log(data);
+
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -37,7 +41,7 @@ const Hotel = () => {
     return diffDays;
   }
 
-  const days = dayDifference(dates[0].endDate, dates[0].startDate);
+  //const days = dayDifference(dates[0].endDate, dates[0].startDate);
 
   const handleOpen = (i) => {
     setSlideNumber(i);
@@ -69,6 +73,8 @@ const Hotel = () => {
       <Header type="list" />
       {loading ? (
         "loading"
+      ) : error ? (
+        "Error loading data"
       ) : (
         <div className="hotelContainer">
           {open && (
@@ -93,33 +99,49 @@ const Hotel = () => {
           )}
           <div className="hotelWrapper">
             <button className="bookNow">Reserve or Book Now!</button>
-            <h1 className="hotelTitle">{data.busName}</h1>
-            <div className="hotelAddress">
-              <FontAwesomeIcon icon={faLocationDot} />
-              <span>{data.address}</span>
-            </div>
-            <span className="hotelDistance">
-              Excellent location – {data.busName}m from center
-            </span>
-            <span className="hotelPriceHighlight">
-              Book a stay over ${data.busName} at this property and get a free
-              airport taxi
-            </span>
+            {data && data.stations && data.stations.length > 0 ? (
+              <>
+                <h1 className="hotelTitle">{data.busName}</h1>
+
+                <div className="hotelAddress">
+                  <FontAwesomeIcon icon={faLocationDot} />
+                  <span>{data.stations[0].stationName}</span>
+                </div>
+                <span className="hotelDistance">
+                  Excellent route – {data.route} from center
+                </span>
+                <span className="hotelPriceHighlight">
+                  Book a ticket over ${data.ticketPrice} at this property and
+                  get a free airport taxi
+                </span>
+              </>
+            ) : (
+              <span>No stations available</span>
+            )}
             <div className="hotelDetails">
               <div className="hotelDetailsTexts">
                 <h1 className="hotelTitle">{data.busName}</h1>
-                <p className="hotelDesc">{data.busName}</p>
+                <p className="busDesc">
+                  Departure Times:
+                  <ul>
+                    {data && data.stations && data.stations.length > 0 ? (
+                      data.stations.map((station) => (
+                        <li key={station._id}>
+                          {station.stationName} - {station.arrivalTime}
+                        </li>
+                      ))
+                    ) : (
+                      <li>No departure times available</li>
+                    )}
+                  </ul>
+                </p>
               </div>
               <div className="hotelDetailsPrice">
-                <h1>Perfect for a {days}-night stay!</h1>
                 <span>
-                  Located in the real heart of Krakow, this property has an
-                  excellent location score of 9.8!
+                  Located in the real heart of the route, this bus has an
+                  excellent location!
                 </span>
-                <h2>
-                  <b>${days * data.cheapestPrice * options.room}</b> ({days}{" "}
-                  nights)
-                </h2>
+
                 <button onClick={handleClick}>Reserve or Book Now!</button>
               </div>
             </div>

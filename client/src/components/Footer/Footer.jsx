@@ -1,52 +1,41 @@
-import "./Footer.css";
+import React from 'react'
+import './Footer.css'
+
 
 const Footer = () => {
   return (
-    <div className="footer">
-      <div className="fLists">
-        <ul className="fList">
-          <li className="fListItem">Countries</li>
-          <li className="fListItem">Regions</li>
-          <li className="fListItem">Cities</li>
-          <li className="fListItem">Districts</li>
-          <li className="fListItem">Airports</li>
-          <li className="fListItem">Hotels</li>
-        </ul>
-        <ul className="fList">
-          <li className="fListItem">Homes </li>
-          <li className="fListItem">Apartments </li>
-          <li className="fListItem">Resorts </li>
-          <li className="fListItem">Villas</li>
-          <li className="fListItem">Hostels</li>
-          <li className="fListItem">Guest houses</li>
-        </ul>
-        <ul className="fList">
-          <li className="fListItem">Unique places to stay </li>
-          <li className="fListItem">Reviews</li>
-          <li className="fListItem">Unpacked: Travel articles </li>
-          <li className="fListItem">Travel communities </li>
-          <li className="fListItem">Seasonal and holiday deals </li>
-        </ul>
-        <ul className="fList">
-          <li className="fListItem">Car rental </li>
-          <li className="fListItem">Flight Finder</li>
-          <li className="fListItem">Restaurant reservations </li>
-          <li className="fListItem">Travel Agents </li>
-        </ul>
-        <ul className="fList">
-          <li className="fListItem">Curtomer Service</li>
-          <li className="fListItem">Partner Help</li>
-          <li className="fListItem">Careers</li>
-          <li className="fListItem">Sustainability</li>
-          <li className="fListItem">Press center</li>
-          <li className="fListItem">Safety Resource Center</li>
-          <li className="fListItem">Investor relations</li>
-          <li className="fListItem">Terms & conditions</li>
-        </ul>
-      </div>
-      <div className="fText">Copyright © 2022 Lamabooking.</div>
-    </div>
-  );
-};
+    <div className='footer' id='footer'>
+     <div className="footer-content">
+        <div className="footer-content-left">
+            <h1>BUS FINDER</h1>
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                when an unknown printer took a galley of type and scrambled it to make a type
+                specimen book.</p>
+           
+        </div>
+        <div className="footer-content-center">
+            <h2>COMPANY</h2>
+            <ul>
+                <li>Home</li>
+                <li>About us</li>
+                <li>Delivery</li>
+                <li>Privacy policy</li>
+            </ul>
 
-export default Footer;
+        </div>
+        <div className="footer-content-right">
+            <h2>GET IN TOUCH</h2>
+            <ul>
+                <li>077-2958177</li>
+                <li>contact@mango.com</li>
+            </ul>
+        </div>
+     </div>
+     <hr/> 
+     <p className="footer-copyright">Coppyright 2024 @ Mango.com-all right reserved</p>  
+    </div>
+  )
+}
+
+export default Footer
