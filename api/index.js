@@ -5,6 +5,7 @@ import cors from "cors";
 import authRouter from "./routes/auth.js";
 import busRouter from "./routes/buses.js";
 import userRouter from "./routes/users.js";
+import seatsRouter from "./routes/seats.js";
 import cookieParser from "cookie-parser";
 const app = express();
 dotenv.config();
@@ -38,6 +39,7 @@ app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/buses", busRouter);
 app.use("/api/users", userRouter);
+app.use("/api/seats", seatsRouter);
 
 //error handling middleware
 app.use((err, req, res, next) => {
