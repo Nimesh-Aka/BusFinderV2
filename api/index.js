@@ -7,6 +7,8 @@ import busRouter from "./routes/buses.js";
 import userRouter from "./routes/users.js";
 import seatsRouter from "./routes/seats.js";
 import cookieParser from "cookie-parser";
+
+//temp comment
 const app = express();
 dotenv.config();
 app.use(cors());
