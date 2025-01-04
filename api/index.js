@@ -6,6 +6,8 @@ import authRouter from "./routes/auth.js";
 import busRouter from "./routes/buses.js";
 import userRouter from "./routes/users.js";
 import cookieParser from "cookie-parser";
+
+//temp comment
 const app = express();
 dotenv.config();
 app.use(cors());
