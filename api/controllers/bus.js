@@ -64,6 +64,8 @@ export const getAllBuses = async (req, res, next) => {
   }
 };
 
+
+//Extra
 export const countByFirstStation = async (req, res, next) => {
   const cities = req.query.cities.split(",");
   try {

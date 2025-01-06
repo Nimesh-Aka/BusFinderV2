@@ -37,9 +37,10 @@ const busSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  availableSeats: {
-    type: [String], // Array of seat numbers
-  },
+  seats: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Seat",
+  }],
   createdAt: {
     type: Date,
     default: Date.now,

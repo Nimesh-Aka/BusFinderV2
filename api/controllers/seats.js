@@ -9,7 +9,7 @@ export const addSeat = async (req, res, next) => {
     const newSeat = new Seats(req.body);
 
     try {
-      const savedSeat = await newSeat.save();
+      const savedSeat = await newSeat.save(); // Save the new seat
       try {
         await Bus.findByIdAndUpdate(busId, { $push: { seats: savedSeat._id } });
       } catch (err) {
@@ -56,11 +56,11 @@ export const deleteSeat = async (req, res, next) => {
   }
 };
 
-//get a bus
+//get a room
 export const getSeat = async (req, res, next) => {
   console.log("Received request to get bus with ID:", req.params.id); // Log to check if function is called
   try {
-    const seat = await Seats.findById(req.params.id);
+    const seat = await Seats.findById(req.params.id); 
     if (!seat) {
       console.log("Bus not found");
       return res.status(404).json({ message: "Bus not found" });
@@ -73,7 +73,7 @@ export const getSeat = async (req, res, next) => {
   }
 };
 
-//get all buses
+//get all seats
 export const getAllSeats = async (req, res, next) => {
   try {
     const seats = await Seats.find();
