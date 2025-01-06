@@ -71,7 +71,7 @@ export const countByFirstStation = async (req, res, next) => {
   try {
     const list = await Promise.all(
       cities.map((city) =>
-        Bus.countDocuments({ "stations.0.stationName": city })
+        Bus.countDocuments({ "busCitiesAndTimes.0.cityName": city })
       )
     );
     res.status(200).json(list);
