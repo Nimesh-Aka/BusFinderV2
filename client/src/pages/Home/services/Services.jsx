@@ -3,8 +3,11 @@ import RootLayout from '../../../layout/RootLayout'
 import ServiceCard from '../../../components/service/ServiceCard'
 import { RiSecurePaymentLine, RiRefund2Line } from 'react-icons/ri';
 import { PiHeadsetFill } from 'react-icons/pi';
+import useFetch from '../../../Hooks/useFetch';
 
 const Services = () => {
+  const { data, loading, error} = useFetch("/buses/countByFirstStation?cities=Colombo,Matara,Kandy");
+
   return (
     <RootLayout className="space-y-12">
 
@@ -16,11 +19,14 @@ const Services = () => {
         </div>
 
         {/*Services Card */}
-        <div className="grid w-full grid-cols-3 gap-10">
-            <ServiceCard icon={RiSecurePaymentLine} title={"Secure PayMent"} desc={"Integrate secure payment gateways for users to ay for their tickets"} />
-            <ServiceCard icon={RiRefund2Line} title={"Refund Policy"} desc={"Offer options for the users to purchase refundable tickets with clear terms "} />
-            <ServiceCard icon={PiHeadsetFill} title={"24/7 support"} desc={"Get assistance anytime through chat, email, or phone"} />
-        </div>
+        {loading ? ("Loading please wait") : (
+          <div className="grid w-full grid-cols-3 gap-10">
+          <ServiceCard icon={RiSecurePaymentLine} title={"Colombo Buses"} desc={`${data[0]} buses in Colombo right now`} />
+          <ServiceCard icon={RiRefund2Line} title={"Matara Buses"} desc={`${data[1]} buses in Matara right now`} />
+          <ServiceCard icon={PiHeadsetFill} title={"Kandy Buses"} desc={`${data[2]} buses in Kandy right now`} />
+          </div>
+        )}
+       
 
     </RootLayout>
   )
