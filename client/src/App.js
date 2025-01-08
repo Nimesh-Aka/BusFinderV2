@@ -10,12 +10,15 @@ import SignUp from "./pages/SignUP/Signup";
 import SignIn from "./pages/SignIN/Signin";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
+import Navbar from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
 
 
 function App() {
   return (
     <SearchContextProvider>
       <BrowserRouter>
+      <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/buses" element={<Buses />} />
@@ -25,6 +28,7 @@ function App() {
           <Route path="/about" element={<About/>} />
           <Route path="/contact" element={<Contact/>} />
         </Routes>
+      <Footer />
       </BrowserRouter>
     </SearchContextProvider>
   );
