@@ -57,7 +57,10 @@ export const getBus = async (req, res, next) => {
 //get all buses
 export const getAllBuses = async (req, res, next) => {
   try {
-    const buses = await Bus.find();
+    const limit = parseInt(req.query.limit, 10) || 0; // Default to 0 if limit is not provided or invalid
+    const query = { ...req.query };
+    delete query.limit; // Remove limit from query
+    const buses = await Bus.find(query).limit(limit);
     res.status(200).json(buses);
   } catch (err) {
     next(err);

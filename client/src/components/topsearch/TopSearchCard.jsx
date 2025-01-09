@@ -6,7 +6,14 @@ import { IoTv } from 'react-icons/io5';
 import { FaSearch } from 'react-icons/fa';
 
 
-const TopSearchCard = ({ routeFrom, routeTo, timeDuration, price }) => {
+const TopSearchCard = ({ routeFrom, routeTo, timeDuration, price, date }) => {
+
+    const formattedDate = new Date(date).toLocaleDateString('en-US', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+      
     return (
         <div className='w-full p-5 space-y-10 border-2 rounded-xl border-neutral-300'>
             <div className="w-full space-y-3.5">
@@ -74,6 +81,10 @@ const TopSearchCard = ({ routeFrom, routeTo, timeDuration, price }) => {
                 </div>
 
 
+            </div>
+
+            <div className="w-full space-y-3.5">
+                <p className="text-xs font-normal text-neutral-600">{formattedDate}</p>
             </div>
 
             <div className="flex items-center justify-between w-full">
