@@ -7,16 +7,19 @@ import Filter from './filter/Filter';
 import SearchResult from './searchresult/SearchResult';
 import { useLocation } from 'react-router-dom';
 import useFetch from '../../Hooks/useFetch';
+import {GrRefresh} from "react-icons/gr";
 
 const Ticket = () => {
   const location = useLocation();
-  const { from, to, date } = location.state || { from: '', to: '', date: '' }; // Extract the passed values
+  const { from, to, date } = location.state || { from: "", to: "", date: "" }; // Extract the passed values
 
-  const {data, loading, error} = useFetch(`/buses?busCitiesAndTimes.0.cityName=${from}`)
+  // Construct the query string
+  const queryString = `/buses?busCitiesAndTimes.0.cityName=${from}&busCitiesAndTimes[$elemMatch][cityName]=${to}&busDepartureDate=${date}`;
 
-  console.log("Fetched data:", data);
-  console.log("Loading:", loading);
-  console.log("Error:", error);
+  // Use useFetch hook to fetch data
+  const { data, loading, error } = useFetch(queryString);
+
+  console.log("Fetched Data:", data);
 
   return (
     <div className="w-full pb-16 space-y-12">
@@ -52,12 +55,29 @@ const Ticket = () => {
           </div>
 
           {/* Search tickets */}
-          {loading ? "Loading" : <>
-          {data.map(item=>(
-            <SearchResult item={item} key={item.id}/>
-          ))}
-          </>}
-          
+          <div className="col-span-3">
+            {loading ? (
+              "Loading..."
+            ) : error ? (
+              <p>Error fetching buses: {error.message}</p>
+            ) : (
+              <>
+                {data.length > 0 ? (
+                  data.map((item) => (
+                    <SearchResult item={item} key={item._id} to={to} />
+                  ))
+                ) : (
+                  <p>No buses found for the selected route.</p>
+                )}
+                <div className="flex items-center justify-center py-5 w-full">
+                  <button className="flex items-center justify-center px-8 py-3 text-base font-normal duration-300 ease-in-out border-2 w-fit bg-primary hover:bg-transparent border-primary hover:border-primary rounded-xl text-neutral-50 gap-x-2 hover:text-primary ">
+                    <GrRefresh />
+                    Load More
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </RootLayout>
     </div>
