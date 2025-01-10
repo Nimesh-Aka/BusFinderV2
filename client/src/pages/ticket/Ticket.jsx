@@ -19,8 +19,6 @@ const Ticket = () => {
   // Use useFetch hook to fetch data
   const { data, loading, error } = useFetch(queryString);
 
-  console.log("Fetched Data:", data);
-
   return (
     <div className="w-full pb-16 space-y-12">
       {/* Top Layout */}
