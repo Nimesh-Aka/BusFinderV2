@@ -12,7 +12,8 @@ import Contact from "./pages/Contact/Contact";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import Ticket from "./pages/ticket/Ticket";
-
+import Checkout from "./pages/ticket/checkout/Checkout"
+import Detail from "./pages/ticket/detail/Detail"
 
 function App() {
   return (
@@ -22,11 +23,13 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/buses" element={<Ticket />} />
-          <Route path="/buses/:id" element={<Booking />} />
+          <Route path="/buses/:id" element={<Detail />} />
           <Route path="/sign-up" element={<SignUp/>} />
           <Route path="/sign-in" element={<SignIn/>} />
           <Route path="/about" element={<About/>} />
           <Route path="/contact" element={<Contact/>} />
+          <Route path="/bus-tickets/checkout" element={<Checkout />} />
+          
         </Routes>
       <Footer />
       </BrowserRouter>

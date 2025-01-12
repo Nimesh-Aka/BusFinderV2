@@ -1,11 +1,16 @@
 import React from 'react'
 import RootLayout from '../../../layout/RootLayout'
 import WarningAlert from '../../../components/alertmessage/WarningAlert'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import TopLayout from '../../../layout/toppage/TopLayout'
 import BusSeat from './seat/busseat/BusSeat'
 
 const Detail = () => {
+    const location = useLocation()
+    const id = location.pathname.split("/")[2];
+    const {routeTo} = location.state || {};
+    console.log("Detail page location: ", id);
+    console.log("Detail passenger location: ", routeTo);
 
     // show the warning message box
     const message = (
@@ -34,7 +39,7 @@ const Detail = () => {
             <WarningAlert message={message} />
 
             {/* Seat layout */}
-            <BusSeat/>
+            <BusSeat id={id} routeTo={routeTo}/>
 
         </div>
 

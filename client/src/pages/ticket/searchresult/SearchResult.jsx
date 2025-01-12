@@ -14,8 +14,8 @@ const SearchResult = ({item, to}) => {
       <div className="space-y-6">
 
       
-        <TicketCard icon={FaBus} busName={item.busName} routeFrom={item.busCitiesAndTimes[0].cityName} routeTo={matchingCity.cityName} 
-        arrivalTime={item.busCitiesAndTimes[0].arrivalTime} departureTime={matchingCity.arrivalTime} price={item.busTicketPrice} availableSeats={"15"} />
+        <TicketCard icon={FaBus} busName={item.busName} date={item.busDepartureDate} routeFrom={item.busCitiesAndTimes[0].cityName} routeTo={matchingCity.cityName} 
+        arrivalTime={item.busCitiesAndTimes[0].arrivalTime} departureTime={matchingCity.arrivalTime} price={item.busTicketPrice} availableSeats={"15"} id={item._id}/>
         
       </div>
 
