@@ -3,9 +3,14 @@ import TopLayout from '../../../layout/toppage/TopLayout'
 import RootLayout from '../../../layout/RootLayout'
 import PassengerData from './passengerdata/PassengerData'
 import BookingStatus from './bookingstatus/BookingStatus';
+import { useLocation } from 'react-router-dom';
 
 
 const Checkout = () => {
+  const location = useLocation();
+  const { selectedSeats, totalCost, id, routeTo} = location.state || {selectedSeats: [], totalCost: 0, id: "", routeTo: ""};
+
+
   return (
     <div className='w-full space-y-12 pb-16'>
       {/* Top Layout */}
@@ -20,7 +25,7 @@ const Checkout = () => {
           {/* Passenger Detail */}
           <PassengerData />
           {/* Ticket Report Status */}
-          <BookingStatus />
+          <BookingStatus id={id} routeTo={routeTo} selectedSeats={selectedSeats} totalCost={totalCost} />
 
         </div>
       </RootLayout>

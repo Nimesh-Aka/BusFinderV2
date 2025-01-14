@@ -13,6 +13,20 @@ const cityTimeSchema = new mongoose.Schema({
   },
 });
 
+// Define a sub-schema for seat availability
+const seatSchema = new mongoose.Schema({
+  seatNumber: {
+    type: String,
+    required: true,
+    trim: true, // Example: "A1", "B3", etc.
+  },
+  availability: {
+    type: String,
+    enum: ['available', 'booked', 'maintenance'], // Define possible statuses
+    default: 'available', // Default to 'available'
+  },
+});
+
 const busSchema = new mongoose.Schema({
   busName: {
     type: String,
@@ -26,7 +40,7 @@ const busSchema = new mongoose.Schema({
   },
   busCitiesAndTimes: {
     type: [cityTimeSchema], // Array of cities and arrival times
-    validate: [arrayLimit, "{PATH} exceeds the limit of 30"], // Limit to 30 cities
+    validate: [arrayLimit, "{PATH} exceeds the limit of 50"], // Limit to 50 cities
   },
   busTicketPrice: {
     type: Number,
@@ -37,19 +51,19 @@ const busSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  seats: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Seat",
-  }],
+  seats: {
+    type: [seatSchema], // Array of seat objects
+    validate: [arrayLimit, "{PATH} exceeds the limit of 50"], // Optional: Limit the number of seats
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-// Custom validator to limit the number of cities in busCitiesAndTimes
+// Custom validator to limit array length
 function arrayLimit(val) {
-  return val.length <= 50;
+  return val.length <= 50; // Adjust the limit as needed
 }
 
 export default mongoose.model("Bus", busSchema);

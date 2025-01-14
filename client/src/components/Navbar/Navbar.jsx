@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FaBars } from 'react-icons/fa';
 import { FaX } from "react-icons/fa6";
+import { AuthContext } from '../../Context/AuthContext';
 
 
 const Navbar = ({setShowLogin}) => {
@@ -9,6 +10,7 @@ const Navbar = ({setShowLogin}) => {
   const [isVisible, setIsVisible] = useState(true);
   const [open, setOpen] = useState(false);
 
+  const {user, dispatch} = useContext(AuthContext);
   //Navbar items
   const navItems = [
     { label: "Home", link: "/" },
@@ -54,49 +56,70 @@ const Navbar = ({setShowLogin}) => {
     >
       <div className="flex items-center justify-between w-full h-full">
         {/*Logo section*/}
-        <Link to="/" className='text-4xl font-bold text-primary'>
+        <Link to="/" className="text-4xl font-bold text-primary">
           BusFinder
         </Link>
 
         {/* Hamburger menu*/}
-        <div className="flex flex-col items-center justify-center gap-1 cursor-pointer w-fit md:hidden text-neutral-700" onClick={handleOpen}>
-          {
-            open
-              ?
-              <FaX className='w-5 h-5' />
-              :
-              <FaBars className='w-5 h-5' />
-          }
+        <div
+          className="flex flex-col items-center justify-center gap-1 cursor-pointer w-fit md:hidden text-neutral-700"
+          onClick={handleOpen}
+        >
+          {open ? <FaX className="w-5 h-5" /> : <FaBars className="w-5 h-5" />}
         </div>
 
-
         {/* Nav links and button*/}
-        <div className={`${open ? "flex absolute top-20 left-0 w-full h-auto md:relative" : "hidden"} flex-1 md:flex flex-col md:flex-row md:gap-14 gap-8 md:items-center items-start md:p-0 sm:p-4 p-4 justify-end md:bg-transparent bg-neutral-50 border md:border-transparent border-neutral-200 md:shadow-none sm:shadow-md shadow-md rounded-xl`}>
+        <div
+          className={`${
+            open
+              ? "flex absolute top-20 left-0 w-full h-auto md:relative"
+              : "hidden"
+          } flex-1 md:flex flex-col md:flex-row md:gap-14 gap-8 md:items-center items-start md:p-0 sm:p-4 p-4 justify-end md:bg-transparent bg-neutral-50 border md:border-transparent border-neutral-200 md:shadow-none sm:shadow-md shadow-md rounded-xl`}
+        >
           {/* Nav Links */}
           <ul className="flex flex-col flex-wrap items-start gap-4 text-lg font-normal list-none md:items-center md:flex-row md:gap-8 text-neutral-500 ">
-
             {navItems.map((item, ind) => (
               <li key={ind}>
-                <Link to={item.link} className='duration-100 ease-in-out hover:text-primary'>
+                <Link
+                  to={item.link}
+                  className="duration-100 ease-in-out hover:text-primary"
+                >
                   {item.label}
                 </Link>
               </li>
             ))}
-
           </ul>
 
           {/* Button */}
-          <div className='flex items-center justify-center'>
-            <button className="w-full px-6 py-2.5 btn md:w-fit md:px-4 md:py-1 bg-primary hover:bg-transparent border border-primary hover:border-primary md:rounded-full rounded-xl text-base font-normal text-neutral-50 hover:text-primary ease-in-out duration-300 " onClick={() => setShowLogin(true)}>
-              Sign in
-            </button>
-          </div>
+          {user ? (
+            <div className="flex items-center gap-4">
+             <span className="text-xl font-bold text-black hover:text-primary-dark transition duration-300 ease-in-out cursor-pointer flex items-center">
+              <span role="img" aria-label="profile" className="mr-2">👤</span>
+              {user.userName}
+            </span>
+
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+                onClick={() => dispatch({ type: "LOGOUT" })}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center">
+              <button
+                className="w-full px-6 py-2.5 btn md:w-fit md:px-4 md:py-1 bg-primary hover:bg-transparent border border-primary hover:border-primary md:rounded-full rounded-xl 
+                  text-base font-normal text-neutral-50 hover:text-primary ease-in-out duration-300"
+                onClick={() => setShowLogin(true)}
+              >
+                Sign in
+              </button>
+            </div>
+          )}
         </div>
-
-
       </div>
     </nav>
-  )
+  );
 }
 
 export default Navbar

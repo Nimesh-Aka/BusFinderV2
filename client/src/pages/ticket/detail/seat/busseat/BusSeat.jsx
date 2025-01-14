@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import useFetch from '../../../../../Hooks/useFetch';
 
 
+
 const BusSeat = ({id, routeTo}) => {
 
     const {data, loading, error} = useFetch(`/buses/find/${id}`);
@@ -44,8 +45,8 @@ const BusSeat = ({id, routeTo}) => {
     //Toggle seat selection
     const handleSeatClick = (seatId) => {
         //If the seat is already booked, ignore the click or disable it 
-        const selectedSeat = busSeatData.find((seat) => seat.id === seatId);
-        if (selectedSeat.status === 'booked') {
+        const selectedSeat = data.seats.find((seat) => seat._id === seatId);
+        if (selectedSeat.availability === 'booked') {
             return; //do nothing
         };
 
@@ -70,14 +71,19 @@ const BusSeat = ({id, routeTo}) => {
 
     //function to determine seat class or seat name on status
     const getSeatName = (seat) => {
-        if (seat.status === 'booked') {
+        if (seat.availability === 'booked') {
             return 'text-primary cursor-not-allowed' // bookes seat unavailable
-        } if (selectedSeats.includes(seat.id)) {
+        } if (selectedSeats.includes(seat._id)) {
             return 'text-yellow-600 cursor-pointer' // selected seat
         }
         return 'text-neutral-500 cursor-pointer' // available seat
     };
 
+    //Calculate the total cost of selected seats
+    const totalCost = selectedSeats.reduce((total, seatId) => {
+      const seat = data.seats.find((busSeat) => busSeat._id === seatId);
+      return total + (seat ? data.busTicketPrice : 0);
+    }, 0);
 
     return (
       <div className="grid w-full grid-cols-5 gap-10">
@@ -99,14 +105,14 @@ const BusSeat = ({id, routeTo}) => {
                 <div className="flex-1 space-y-5">
                   {/* First row */}
                   <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                    {busSeatData.slice(0, 9).map((seat) => (
+                    {data.seats.map((seat) => (
                       <div
-                        key={seat.id}
+                        key={seat._id}
                         className="flex items-center gap-x-0"
-                        onClick={() => handleSeatClick(seat.id)}
+                        onClick={() => handleSeatClick(seat._id)}
                       >
                         <h6 className="text-base font-bold text-neutral-600">
-                          {seat.id}
+                          {seat.seatNumber}
                         </h6>
                         <MdOutlineChair
                           className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
@@ -212,7 +218,7 @@ const BusSeat = ({id, routeTo}) => {
 
               <div className="flex items-center gap-x-2">
                 <RiMoneyRupeeCircleLine className="text-xl text-neutral-500" />
-                <p className="text-sm font-medium text-neutral-500">Rs. 180</p>
+                <p className="text-sm font-medium text-neutral-500">{data.busTicketPrice}</p>
               </div>
             </div>
           </div>
@@ -282,7 +288,7 @@ const BusSeat = ({id, routeTo}) => {
                       key={seatId}
                       className="flex items-center justify-center text-base font-semibold rounded-lg w-9 h-9 bg-neutral-200/80 text-neutral-700 "
                     >
-                      {seatId}
+                      {data.seats.find(seat => seat._id === seatId).seatNumber}
                     </div>
                   );
                 })}
@@ -320,12 +326,8 @@ const BusSeat = ({id, routeTo}) => {
               {/* Calculate the total price */}
               <p className="text-base font-semibold text-neutral-600">
                 Rs{" "}
-                {selectedSeats.reduce((total, seatId) => {
-                  const seat = busSeatData.find(
-                    (busSeat) => busSeat.id === seatId
-                  );
-                  return total + (seat ? seat.price : 0);
-                }, 0)}
+                
+                {totalCost}
               </p>
             </div>
           </div>
@@ -333,7 +335,7 @@ const BusSeat = ({id, routeTo}) => {
           <div className="flex items-center justify-center w-full">
             {selectedSeats.length > 0 ? (
               <Link
-                to="/bus-tickets/checkout"
+              to={`/bus-tickets/checkout`} state={{selectedSeats, totalCost, id, routeTo}}
                 className="w-full text-sm font-normal bg-primary hover:bg-primary/90 text-neutral-50 py-2.5 flex items-center justify-center uppercase rounded-lg transition"
               >
                 Processed to CheckOut
