@@ -1,7 +1,6 @@
 {
   "name": "busfinder",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -21,5 +20,7 @@
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.1",
     "nodemon": "^3.1.7"
-  }
+  },
+  "devDependencies": {},
+  "description": ""
 }

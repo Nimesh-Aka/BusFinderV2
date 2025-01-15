@@ -57,19 +57,37 @@ export const getBus = async (req, res, next) => {
 //get all buses
 export const getAllBuses = async (req, res, next) => {
   try {
-    const buses = await Bus.find();
+    const limit = parseInt(req.query.limit, 10) || 0; // Default to 0 if limit is not provided or invalid
+    const query = { ...req.query };
+    delete query.limit; // Remove limit from query
+
+    // Check if busDepartureDate is provided in 'YYYY-MM-DD' format and convert it to a date range
+    if (req.query.busDepartureDate) {
+      const busDepartureDate = req.query.busDepartureDate;
+      const startOfDay = new Date(busDepartureDate);
+      const endOfDay = new Date(busDepartureDate);
+      endOfDay.setDate(endOfDay.getDate() + 1);  // Move to the next day to create a range
+
+      query.busDepartureDate = {
+        $gte: startOfDay,
+        $lt: endOfDay,
+      };
+    }
+    const buses = await Bus.find(query).limit(limit);
     res.status(200).json(buses);
   } catch (err) {
     next(err);
   }
 };
 
+
+//Extra
 export const countByFirstStation = async (req, res, next) => {
   const cities = req.query.cities.split(",");
   try {
     const list = await Promise.all(
       cities.map((city) =>
-        Bus.countDocuments({ "stations.0.stationName": city })
+        Bus.countDocuments({ "busCitiesAndTimes.0.cityName": city })
       )
     );
     res.status(200).json(list);

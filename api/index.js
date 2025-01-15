@@ -8,10 +8,11 @@ import userRouter from "./routes/users.js";
 import seatsRouter from "./routes/seats.js";
 import cookieParser from "cookie-parser";
 
-//temp comment
-const app = express();
+//tem comment
+const app = express(); //this line create a new web server
+
 dotenv.config();
-app.use(cors());
+app.use(cors());//Allowing Other Websites to Talk to Your Server
 
 const PORT = process.env.PORT || 8000;
 
@@ -38,6 +39,7 @@ mongoose.connection.on("connected", () => {
 app.use(cookieParser());
 app.use(express.json());
 
+//routes
 app.use("/api/auth", authRouter);
 app.use("/api/buses", busRouter);
 app.use("/api/users", userRouter);

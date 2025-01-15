@@ -70,24 +70,6 @@ const Header = ({ type }) => {
           type === "list" ? "headerContainer listMode" : "headerContainer"
         }
       >
-        <div className="headerList">
-          <div className="headerListItem active">
-            <FontAwesomeIcon icon={faBus} />
-            <span>Buses</span>
-          </div>
-          <div className="headerListItem">
-            <FontAwesomeIcon icon={faCalendarDays} />
-            <span>Schedule</span>
-          </div>
-          <div className="headerListItem">
-            <FontAwesomeIcon icon={faPerson} />
-            <span>Passenger Info</span>
-          </div>
-          <div className="headerListItem">
-            <FontAwesomeIcon icon={faMapMarkedAlt} />
-            <span>Destinations</span>
-          </div>
-        </div>
         {type !== "list" && (
           <>
             <h1 className="headerTitle">Plan Your Journey with Ease</h1>
@@ -95,7 +77,14 @@ const Header = ({ type }) => {
               Discover your perfect bus journey with great prices and flexible
               options!
             </p>
-            {!user && <button className="headerBtn" onClick={() => navigate('/sign-up')}>Register</button>}
+            {!user && (
+              <button
+                className="headerBtn"
+                onClick={() => navigate("/sign-up")}
+              >
+                Register
+              </button>
+            )}
 
             <div className="headerSearch">
               <div className="headerSearchItem">

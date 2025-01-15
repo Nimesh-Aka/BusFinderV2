@@ -13,16 +13,17 @@ const cityTimeSchema = new mongoose.Schema({
   },
 });
 
-// Define a sub-schema for bus stops and times
-const stopTimeSchema = new mongoose.Schema({
-  stopName: {
+// Define a sub-schema for seat availability
+const seatSchema = new mongoose.Schema({
+  seatNumber: {
     type: String,
     required: true,
-    trim: true,
+    trim: true, // Example: "A1", "B3", etc.
   },
-  arrivalTime: {
+  availability: {
     type: String,
-    required: true,
+    enum: ['available', 'booked', 'maintenance'], // Define possible statuses
+    default: 'available', // Default to 'available'
   },
 });
 
@@ -32,20 +33,14 @@ const busSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  busType: {
-    type: String,
-    required: true,
-    enum: ["Standard", "Luxury", "Sleeper", "Seater"], // Example types
-    trim: true,
-  },
-  busRouteNumber: {
+  busPlateNo: {
     type: String,
     required: true,
     trim: true,
   },
   busCitiesAndTimes: {
     type: [cityTimeSchema], // Array of cities and arrival times
-    validate: [arrayLimit, "{PATH} exceeds the limit of 30"], // Limit to 30 cities
+    validate: [arrayLimit, "{PATH} exceeds the limit of 50"], // Limit to 50 cities
   },
   busTicketPrice: {
     type: Number,
@@ -56,19 +51,9 @@ const busSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  busFeatures: {
-    type: [String], // Array of features (e.g., "WiFi", "AC", "Charging Points")
-    default: [], // Defaults to an empty array if no features are added
-  },
-  busStopsAndTimes: {
-    type: [stopTimeSchema], // Array of stops with arrival and departure times
-  },
-  isAvailable: {
-    type: Boolean,
-    default: true,
-  },
   seats: {
-    type: [String], // Array of seat numbers
+    type: [seatSchema], // Array of seat objects
+    validate: [arrayLimit, "{PATH} exceeds the limit of 50"], // Optional: Limit the number of seats
   },
   createdAt: {
     type: Date,
@@ -76,9 +61,9 @@ const busSchema = new mongoose.Schema({
   },
 });
 
-// Custom validator to limit the number of cities in busCitiesAndTimes
+// Custom validator to limit array length
 function arrayLimit(val) {
-  return val.length <= 30;
+  return val.length <= 50; // Adjust the limit as needed
 }
 
 export default mongoose.model("Bus", busSchema);

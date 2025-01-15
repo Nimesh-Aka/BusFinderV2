@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { createError } from "../utils/error.js";
 
 //User Registration
 export const register = async (req, res, next) => {
@@ -11,6 +12,7 @@ export const register = async (req, res, next) => {
     const newUser = new User({
       userName: req.body.userName,
       email: req.body.email,
+      mobile: req.body.mobile,
       password: hash,
     });
 
