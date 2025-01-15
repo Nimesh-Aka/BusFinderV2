@@ -14,6 +14,7 @@ import Checkout from "./pages/ticket/checkout/Checkout"
 import Detail from "./pages/ticket/detail/Detail"
 import LoginPopup from "./components/loginpopup/LoginPopup"
 import { AuthContextProvider } from "./Context/AuthContext";
+import Invoice from "./pages/ticket/invoice/Invoice"
 
 function App() {
   const [showLogin, setShowLogin] = useState(false)
@@ -31,6 +32,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/bus-tickets/checkout" element={<Checkout />} />
+          <Route path="/bus-tickets/payment" element={<Invoice/>} />
         </Routes>
         <Footer />
       </AuthContextProvider>

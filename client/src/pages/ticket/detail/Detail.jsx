@@ -4,6 +4,10 @@ import WarningAlert from '../../../components/alertmessage/WarningAlert'
 import { Link, useLocation } from 'react-router-dom'
 import TopLayout from '../../../layout/toppage/TopLayout'
 import BusSeat from './seat/busseat/BusSeat'
+import ToggleBtn from '../../../components/togglebtn/ToggleBtn'
+import Amenities from './amenities/Amenities'
+import ReservationPolicy from './reservationpolicy/ReservationPolicy'
+import BusImage from './busimage/BusImage'
 
 const Detail = () => {
     const location = useLocation()
@@ -44,7 +48,46 @@ const Detail = () => {
         </div>
 
         {/* Bus details */}
-        <div className="flex flex-col items-center justify-center w-full gap-8 text-center"></div>
+        <div className="flex flex-col items-center justify-center w-full gap-8 text-center">
+        {/* short description about the bus  */}
+        <p className="text-base text-neutral-500 font-normal text-justify">
+            The bus offers a comfortable and convenient travel experience with modern facilities such as air conditioning, 
+            reclining seats, and ample legroom. 
+            Additional amenities may include onboard Wi-Fi, USB charging ports, entertainment screens, and luggage storage compartments. 
+            Some buses also provide refreshments, reading lights, and clean restrooms for long journeys, ensuring a pleasant and relaxing ride.
+             <span className="text-lg text-neutral-600 font-medium ml-2">
+                Want to see more about the bus?
+            </span>   
+            </p>
+
+            {/* Button */}
+            <div className="w-full flex items-center justify-center gap-6 flex-col">
+
+                <ToggleBtn
+                    buttonText={"See Bus Details"}
+                    buttonTextHidden={"Hide Bus Details"}
+                >
+                    <div className="w-full space-y-10">
+
+                        {/* reservation policy and amenities */}
+                        <div className="w-full grid grid-cols-7 gap-20">
+
+                            {/* Amenities */}
+                            <Amenities/>
+
+                            {/* Reservation policy */}
+                            <ReservationPolicy/>
+
+                        </div>
+                        {/* bus images */}
+                        <BusImage /> 
+                    </div>
+
+                </ToggleBtn>
+                    
+            </div>
+
+        </div>
 
     </RootLayout>
       

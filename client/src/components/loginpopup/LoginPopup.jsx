@@ -10,6 +10,7 @@ const LoginPopup = ({ setShowLogin }) => {
     userName: undefined,
     email: undefined,
     password: undefined,
+    mobile: undefined,
   });
 
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ const LoginPopup = ({ setShowLogin }) => {
         await axios.post("/auth/register", {
           userName: credentials.userName,
           email: credentials.email,
+          mobile: credentials.mobile,
           password: credentials.password,
         });
         alert("Registration successful! Please log in.");
@@ -81,8 +83,8 @@ const LoginPopup = ({ setShowLogin }) => {
             onChange={handleChange}
             required
           />
-          {currState === "Sign Up" && (
-            // Email (only for registration)
+          {currState === "Sign Up" && (<>
+            {/* Email (only for registration) */}
             <input
               type="email"
               placeholder="Your email"
@@ -91,6 +93,16 @@ const LoginPopup = ({ setShowLogin }) => {
               onChange={handleChange}
               required
             />
+            {/* Mobile Number (only for registration) */}
+            <input
+              type="tel"
+              placeholder="Your mobile number"
+              className="p-4 border border-gray-300 rounded-md outline-none"
+              id="mobile"
+              onChange={handleChange}
+              required
+            />
+          </>
           )}
           {/* Password */}
           <input
