@@ -56,3 +56,37 @@ export const login = async (req, res, next) => {
     next(error);
   }
 };
+
+
+export const checkUniqueness = async (req, res, next) => {
+  try {
+    const { userName, email, mobile } = req.body;
+
+    const errors = {};
+
+    console.log("Received data:", req.body);
+
+    const userNameExists = await User.findOne({ userName });
+    if (userNameExists) {
+      errors.userName = "Username already exists";
+    }
+
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      errors.email = "Email already exists";
+    }
+
+    const mobileExists = await User.findOne({ mobile });
+    if (mobileExists) {
+      errors.mobile = "Mobile number already exists";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return res.status(409).json({ errors });
+    }
+
+    res.status(200).json({ userName: true, email: true, mobile: true });
+  } catch (error) {
+    next(error);
+  }
+};
