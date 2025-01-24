@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  allStationsNames,
   countByFirstStation,
   createBus,
   deleteBus,
@@ -25,6 +26,8 @@ router.get("/find/:id", getBus);
 
 //get all buses
 router.get("/", getAllBuses);
+
+router.get("/stationsList", allStationsNames)
 
 router.get("/countByFirstStation", countByFirstStation);
 

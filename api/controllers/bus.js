@@ -95,3 +95,22 @@ export const countByFirstStation = async (req, res, next) => {
     next(err);
   }
 };
+
+
+//get all station names
+
+export const allStationsNames = async (req, res, next) => {
+  try {
+    const searchQuery = req.query.search?.toLowerCase() || ""; // Get the search query from the request
+    const allStations = await Bus.distinct("busCitiesAndTimes.cityName"); // Fetch all distinct city names
+
+    // Filter stations based on the search query
+    const filteredStations = allStations.filter((city) =>
+      city.toLowerCase().includes(searchQuery)
+    );
+
+    res.status(200).json(filteredStations); // Return the filtered list
+  } catch (err) {
+    next(err);
+  }
+};
