@@ -33,6 +33,9 @@ const LoginPopup = ({ setShowLogin }) => {
     const { id, value } = e.target;
     setCredentials((prev) => ({ ...prev, [id]: value }));
 
+    // Reset the specific error for the input field being edited
+  setErrors((prev) => ({ ...prev, [id]: "" }));
+
     if (id === "password") {
       updatePasswordStrength(value);
     }
@@ -185,14 +188,31 @@ const LoginPopup = ({ setShowLogin }) => {
           password: credentials.password,
         });
         dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+        alert("Login successful!");
         setShowLogin(false);
         navigate("/");
       } catch (err) {
-        dispatch({ type: "LOGIN_FAILURE", payload: err.response.data });
+        dispatch({ type: "LOGIN_FAILURE", payload: err.response?.data });
+        
+        // Handle specific error messages
+        if (err.response?.status === 401) {
+          // Unauthorized: invalid credentials
+          const errorMessage = err.response.data?.message || "Invalid credentials.";
+          if (errorMessage.includes("username")) {
+            setErrors((prev) => ({ ...prev, userName: "Invalid username." }));
+          } else if (errorMessage.includes("password")) {
+            setErrors((prev) => ({ ...prev, password: "Incorrect password." }));
+          } else {
+            setErrors((prev) => ({ ...prev, userName: "", password: errorMessage }));
+          }
+        } else {
+          console.error("Login error:", err);
+          alert("Something went wrong. Please try again later.");
+        }
       }
     }
   };
-  
+
   // Prevent scrolling when the popup is active
   useEffect(() => {
     document.body.classList.add("overflow-hidden");
@@ -201,8 +221,11 @@ const LoginPopup = ({ setShowLogin }) => {
     };
   }, []);
 
+  
+
   return (
     <div className="absolute z-10 grid w-full h-full bg-black/60">
+      <ToastContainer />
       <form className="place-self-center max-w-[23vw] sm:max-w-[330px] text-gray-500 bg-white flex flex-col gap-6 p-8 rounded-lg text-sm animate-fadeIn">
         <div className="flex items-center justify-between text-black">
           <h1 className="text-xl font-bold">{currState}</h1>
@@ -259,7 +282,7 @@ const LoginPopup = ({ setShowLogin }) => {
             required
           />
           {errors.password && <p className="text-red-500">{errors.password}</p>}
-          {credentials.password && (
+          {currState === "Sign Up" && credentials.password && (
             <p style={{ color: passwordStrength.color }}>
               Password Strength: {passwordStrength.level}
             </p>
