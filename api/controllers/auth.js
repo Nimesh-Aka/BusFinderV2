@@ -70,7 +70,7 @@ export const login = async (req, res, next) => {
 }
 
 
-
+//Check for uniqueness of username, email and mobile
 export const checkUniqueness = async (req, res, next) => {
   try {
     const { userName, email, mobile } = req.body;

@@ -58,8 +58,7 @@ export const getBus = async (req, res, next) => {
 export const getAllBuses = async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 0; // Default to 0 if limit is not provided or invalid
-    const query = { ...req.query };
-    delete query.limit; // Remove limit from query
+    const query = {};
 
     // Check if busDepartureDate is provided in 'YYYY-MM-DD' format and convert it to a date range
     if (req.query.busDepartureDate) {
@@ -73,8 +72,27 @@ export const getAllBuses = async (req, res, next) => {
         $lt: endOfDay,
       };
     }
+
+    // Check if busCitiesAndTimes.cityName is provided
+    if (req.query.fromCity && req.query.toCity) {
+      query['busCitiesAndTimes'] = {
+        $all: [
+          { $elemMatch: { cityName: req.query.fromCity } },
+          { $elemMatch: { cityName: req.query.toCity } }
+        ]
+      };
+    }
+
     const buses = await Bus.find(query).limit(limit);
-    res.status(200).json(buses);
+
+    // Filter buses to ensure 'fromCity' comes before 'toCity'
+    const filteredBuses = buses.filter(bus => {
+      const fromIndex = bus.busCitiesAndTimes.findIndex(city => city.cityName === req.query.fromCity);
+      const toIndex = bus.busCitiesAndTimes.findIndex(city => city.cityName === req.query.toCity);
+      return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
+    });
+
+    res.status(200).json(filteredBuses);
   } catch (err) {
     next(err);
   }
@@ -98,7 +116,6 @@ export const countByFirstStation = async (req, res, next) => {
 
 
 //get all station names
-
 export const allStationsNames = async (req, res, next) => {
   try {
     const searchQuery = req.query.search?.toLowerCase() || ""; // Get the search query from the request

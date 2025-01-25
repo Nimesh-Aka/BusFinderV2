@@ -13,7 +13,7 @@ import { verifyAdmin } from "../utils/verifyToken.js";
 const router = express.Router();
 
 //create
-router.post("/", verifyAdmin, createBus);
+router.post("/", createBus); //removed verifyAdmin from this line
 
 //update bus
 router.put("/:id", verifyAdmin, updateBus);

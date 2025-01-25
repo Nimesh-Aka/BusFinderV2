@@ -14,7 +14,10 @@ const Ticket = () => {
   const { from, to, date } = location.state || { from: "", to: "", date: "" }; // Extract the passed values
 
   // Construct the query string
-  const queryString = `/buses?busCitiesAndTimes.0.cityName=${from}&busCitiesAndTimes[$elemMatch][cityName]=${to}&busDepartureDate=${date}`;
+  let queryString = "/buses?";
+  if (from) queryString += `fromCity=${from}&`;
+  if (to) queryString += `toCity=${to}&`;
+  if (date) queryString += `busDepartureDate=${date}`;
 
   // Use useFetch hook to fetch data
   const { data, loading, error } = useFetch(queryString);
@@ -62,7 +65,7 @@ const Ticket = () => {
               <>
                 {data.length > 0 ? (
                   data.map((item) => (
-                    <SearchResult item={item} key={item._id} to={to} />
+                    <SearchResult item={item} key={item._id} from={from} to={to} />
                   ))
                 ) : (
                   <p>No buses found for the selected route.</p>
