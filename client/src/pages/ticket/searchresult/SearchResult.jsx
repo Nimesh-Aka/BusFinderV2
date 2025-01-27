@@ -10,6 +10,8 @@ const SearchResult = ({item, from, to}) => {
   const matchingCityFrom = item.busCitiesAndTimes.find(city => city.cityName === from);
   const matchingCityTo = item.busCitiesAndTimes.find(city => city.cityName === to);
 
+  //Seat Count
+  const seatCount = item.seats.length;
   
 
   return (
@@ -20,7 +22,8 @@ const SearchResult = ({item, from, to}) => {
       
         {matchingCityFrom && matchingCityTo && (
           <TicketCard icon={FaBus} busName={item.busName} date={item.busDepartureDate} routeFrom={matchingCityFrom.cityName} routeTo={matchingCityTo.cityName} 
-          arrivalTime={matchingCityFrom.arrivalTime} departureTime={matchingCityTo.arrivalTime} price={item.busTicketPrice} availableSeats={"15"} id={item._id}/>
+          arrivalTime={matchingCityFrom.arrivalTime} departureTime={matchingCityTo.arrivalTime} price={item.busTicketPrice} availableSeats={seatCount} id={item._id}
+          item={item}/>
         )}
         
       </div>

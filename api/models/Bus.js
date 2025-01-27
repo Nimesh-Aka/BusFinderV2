@@ -52,13 +52,8 @@ const busSchema = new mongoose.Schema({
     enum: [
       'Internet/Wifi',
       'AC',
-      'Water Bottles',
-      'Led TV',
-      'Music',
       'Charging Ports',
       'Fan',
-      'Super AC',
-      'Vip Sofa',
     ],
     default: [], // Default to an empty array
   },
