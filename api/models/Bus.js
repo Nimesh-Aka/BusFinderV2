@@ -40,7 +40,7 @@ const busSchema = new mongoose.Schema({
   },
   busType: {
     type: String,
-    enum: ['AC Delux', 'Tourist AC Delux', 'Air Suspension', 'Luxury AC Delux'], // Bus types
+    enum: ['AC Delux', 'Tourist AC Delux', 'Air Suspension', 'Semi Luxury'], // Bus types
     
   },
   busOwnership: {

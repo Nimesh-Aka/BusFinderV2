@@ -4,6 +4,7 @@ import {
   countByFirstStation,
   createBus,
   deleteBus,
+  filterBuses,
   getAllBuses,
   getBus,
   updateBus,
@@ -27,7 +28,11 @@ router.get("/find/:id", getBus);
 //get all buses
 router.get("/", getAllBuses);
 
+//get all stations for searching
 router.get("/stationsList", allStationsNames)
+
+//get sorted buses
+router.post("/filter", filterBuses);
 
 router.get("/countByFirstStation", countByFirstStation);
 

@@ -77,20 +77,26 @@ export const getAllBuses = async (req, res, next) => {
 
     // Check if busCitiesAndTimes.cityName is provided
     if (req.query.fromCity && req.query.toCity) {
-      query['busCitiesAndTimes'] = {
+      query["busCitiesAndTimes"] = {
         $all: [
           { $elemMatch: { cityName: req.query.fromCity } },
-          { $elemMatch: { cityName: req.query.toCity } }
-        ]
+          { $elemMatch: { cityName: req.query.toCity } },
+        ],
       };
     }
 
-    const buses = await Bus.find(query).sort({ busDepartureDate: 1 }).limit(limit);
+    const buses = await Bus.find(query)
+      .sort({ busDepartureDate: 1 })
+      .limit(limit);
 
     // Filter buses to ensure 'fromCity' comes before 'toCity'
-    const filteredBuses = buses.filter(bus => {
-      const fromIndex = bus.busCitiesAndTimes.findIndex(city => city.cityName === req.query.fromCity);
-      const toIndex = bus.busCitiesAndTimes.findIndex(city => city.cityName === req.query.toCity);
+    const filteredBuses = buses.filter((bus) => {
+      const fromIndex = bus.busCitiesAndTimes.findIndex(
+        (city) => city.cityName === req.query.fromCity
+      );
+      const toIndex = bus.busCitiesAndTimes.findIndex(
+        (city) => city.cityName === req.query.toCity
+      );
       return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
     });
 
@@ -99,7 +105,6 @@ export const getAllBuses = async (req, res, next) => {
     next(err);
   }
 };
-
 
 //Extra
 export const countByFirstStation = async (req, res, next) => {
@@ -116,7 +121,6 @@ export const countByFirstStation = async (req, res, next) => {
   }
 };
 
-
 //get all station names
 export const allStationsNames = async (req, res, next) => {
   try {
@@ -130,6 +134,90 @@ export const allStationsNames = async (req, res, next) => {
 
     res.status(200).json(filteredStations); // Return the filtered list
   } catch (err) {
+    next(err);
+  }
+};
+
+export const filterBuses = async (req, res, next) => {
+  try {
+    const {
+      sortBy,
+      busType,
+      busOwnership,
+      busAmenities,
+      fromCity,
+      toCity,
+      busDepartureDate,
+    } = req.body;
+
+    // Fetch all buses from database instead of receiving in request body
+    let buses = await Bus.find().populate(); // Assuming you have a Bus model
+
+    let filteredBuses = buses;
+
+    // Bus Type Filter
+    if (busType?.length > 0) {
+      filteredBuses = filteredBuses.filter((bus) =>
+        busType.includes(bus.busType)
+      );
+    }
+
+    // Company Filter
+    if (busOwnership?.length > 0) {
+      filteredBuses = filteredBuses.filter((bus) =>
+        busOwnership.includes(bus.busOwnership)
+      );
+    }
+
+    // Amenities Filter (AND condition - must include all selected amenities)
+    if (busAmenities?.length > 0) {
+      filteredBuses = filteredBuses.filter((bus) =>
+        busAmenities.every((amenity) => bus.busAmenities.includes(amenity))
+      );
+    }
+
+    // Date Filter
+    if (busDepartureDate) {
+      const targetDate = new Date(busDepartureDate).toISOString().split("T")[0];
+      filteredBuses = filteredBuses.filter((bus) => {
+        const busDate = new Date(bus.busDepartureDate)
+          .toISOString()
+          .split("T")[0];
+        return busDate === targetDate;
+      });
+    }
+
+    // Route Filter
+    if (fromCity && toCity) {
+      filteredBuses = filteredBuses.filter((bus) => {
+        const fromIndex = bus.busCitiesAndTimes.findIndex(
+          (c) => c.cityName === fromCity
+        );
+        const toIndex = bus.busCitiesAndTimes.findIndex(
+          (c) => c.cityName === toCity
+        );
+        return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
+      });
+    }
+
+    // Sorting
+    switch (sortBy) {
+      case "priceAsc":
+        filteredBuses.sort((a, b) => a.busTicketPrice - b.busTicketPrice);
+        break;
+      case "priceDesc":
+        filteredBuses.sort((a, b) => b.busTicketPrice - a.busTicketPrice);
+        break;
+    }
+
+    // **Return -1 if no matching buses found**
+    if (filteredBuses.length === 0) {
+      return res.status(200).json(-1);
+    }
+    
+    res.status(200).json(filteredBuses);
+  } catch (err) {
+    console.error('Error filtering buses:', err);
     next(err);
   }
 };
