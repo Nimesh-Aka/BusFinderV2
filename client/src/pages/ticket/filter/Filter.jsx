@@ -8,9 +8,18 @@ const Filter = ({ className }) => {
         max: 100
     });
 
-    const handleRangeChange = (values) => {
-        setRangeValues({ values });
-    }
+  // Fetch all buses on component mount
+  useEffect(() => {
+    const fetchAllBuses = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/buses");
+        setAllBuses(response.data);
+        setBuses(response.data); // Set initial buses
+
+        console.log("All Buses:", response.data);
+      } catch (error) {
+        console.error("Error fetching all buses:", error);
+      }
 
     return (
         <div className={`w-full ${className}`}>
