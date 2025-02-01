@@ -38,6 +38,28 @@ const busSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
+  busType: {
+    type: String,
+    enum: ['AC Delux', 'Tourist AC Delux', 'Air Suspension', 'Semi Luxury'], // Bus types
+    
+  },
+  busOwnership: {
+    type: String,
+    enum: ['CTB', 'Private'], // Ownership type
+  },
+  busAmenities: {
+    type: [String], // Array of amenities
+    enum: [
+      'Internet/Wifi',
+      'AC',
+      'Charging Ports',
+      'Fan',
+    ],
+    default: [], // Default to an empty array
+  },
+  recommends: {
+    type: Number, // Number of recommendations
+  },
   busCitiesAndTimes: {
     type: [cityTimeSchema], // Array of cities and arrival times
     validate: [arrayLimit, "{PATH} exceeds the limit of 50"], // Limit to 50 cities

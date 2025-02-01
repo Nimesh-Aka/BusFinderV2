@@ -1,8 +1,10 @@
 import express from "express";
 import {
+  allStationsNames,
   countByFirstStation,
   createBus,
   deleteBus,
+  filterBuses,
   getAllBuses,
   getBus,
   updateBus,
@@ -12,7 +14,7 @@ import { verifyAdmin } from "../utils/verifyToken.js";
 const router = express.Router();
 
 //create
-router.post("/", verifyAdmin, createBus);
+router.post("/", createBus); //removed verifyAdmin from this line
 
 //update bus
 router.put("/:id", verifyAdmin, updateBus);
@@ -25,6 +27,12 @@ router.get("/find/:id", getBus);
 
 //get all buses
 router.get("/", getAllBuses);
+
+//get all stations for searching
+router.get("/stationsList", allStationsNames)
+
+//get sorted buses
+router.post("/filter", filterBuses);
 
 router.get("/countByFirstStation", countByFirstStation);
 
