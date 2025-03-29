@@ -103,9 +103,10 @@ const BusSeat = ({id, routeTo}) => {
               {/* Seat rows */}
               <div className="flex flex-col items-center border-l-2 border-dashed border-neutral-300 pl-7">
                 <div className="flex-1 space-y-5">
+                  
                   {/* First row */}
                   <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                    {data.seats.map((seat) => (
+                    {data.seats.slice(0, 9).map((seat) => (
                       <div
                         key={seat._id}
                         className="flex items-center gap-x-0"
@@ -123,14 +124,14 @@ const BusSeat = ({id, routeTo}) => {
 
                   {/* Second row */}
                   <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                    {busSeatData.slice(9, 18).map((seat) => (
+                    {data.seats.slice(9, 18).map((seat) => (
                       <div
-                        key={seat.id}
+                        key={seat._id}
                         className="flex items-center gap-x-0"
-                        onClick={() => handleSeatClick(seat.id)}
+                        onClick={() => handleSeatClick(seat._id)}
                       >
                         <h6 className="text-base font-bold text-neutral-600">
-                          {seat.id}
+                          {seat.seatNumber}
                         </h6>
                         <MdOutlineChair
                           className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
@@ -142,14 +143,14 @@ const BusSeat = ({id, routeTo}) => {
                   {/* Third row */}
                   <div className="grid justify-end w-full h-auto grid-cols-10 gap-x-5">
                     <div className="col-span-9"></div>
-                    {busSeatData.slice(18, 19).map((seat) => (
+                    {data.seats.slice(18, 19).map((seat) => (
                       <div
-                        key={seat.id}
+                        key={seat._id}
                         className="flex items-center gap-x-0"
-                        onClick={() => handleSeatClick(seat.id)}
+                        onClick={() => handleSeatClick(seat._id)}
                       >
                         <h6 className="text-base font-bold text-neutral-600">
-                          {seat.id}
+                          {seat.seatNumber}
                         </h6>
                         <MdOutlineChair
                           className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
@@ -160,14 +161,14 @@ const BusSeat = ({id, routeTo}) => {
 
                   {/* Fourth row */}
                   <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                    {busSeatData.slice(19, 28).map((seat) => (
+                    {data.seats.slice(19, 28).map((seat) => (
                       <div
-                        key={seat.id}
+                        key={seat._id}
                         className="flex items-center gap-x-0"
-                        onClick={() => handleSeatClick(seat.id)}
+                        onClick={() => handleSeatClick(seat._id)}
                       >
                         <h6 className="text-base font-bold text-neutral-600">
-                          {seat.id}
+                          {seat.seatNumber}
                         </h6>
                         <MdOutlineChair
                           className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
@@ -178,14 +179,14 @@ const BusSeat = ({id, routeTo}) => {
 
                   {/* Fifth row */}
                   <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                    {busSeatData.slice(28, 37).map((seat) => (
+                    {data.seats.slice(28, 37).map((seat) => (
                       <div
-                        key={seat.id}
+                        key={seat._id}
                         className="flex items-center gap-x-0"
-                        onClick={() => handleSeatClick(seat.id)}
+                        onClick={() => handleSeatClick(seat._id)}
                       >
                         <h6 className="text-base font-bold text-neutral-600">
-                          {seat.id}
+                          {seat.seatNumber}
                         </h6>
                         <MdOutlineChair
                           className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
