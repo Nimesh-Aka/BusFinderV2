@@ -19,9 +19,10 @@ const Ticket = () => {
   if (from) params.push(`fromCity=${from}`);
   if (to) params.push(`toCity=${to}`);
   if (date) params.push(`busDepartureDate=${date}`);
-  queryString += params.join("&");
+  queryString += params.join("&");  
 
   const { data, loading, error } = useFetch(queryString);
+
   const [filteredBuses, setFilteredBuses] = useState(null);
 
   // Handle data updates and filter reset
