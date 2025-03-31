@@ -1,11 +1,11 @@
 export const Footer = () => {
     return (
         <footer className="flex flex-wrap items-center justify-between gap-4 pt-4">
-            <p className="text-base font-medium text-slate-900 dark:text-slate-50">© 2024 XD Code All Rights Reserved</p>
+            <p className="text-base font-medium text-slate-900 dark:text-slate-50">© 2025 XD Code All Rights Reserved</p>
             <div className="flex flex-wrap gap-x-2">
                 <a
                     href="#"
-                    className="link"
+                    className="link"x
                 >
                     Privacy Policy
                 </a>
