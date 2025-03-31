@@ -55,27 +55,19 @@ export const getBus = async (req, res, next) => {
 };
 
 //get all buses
-export const getAllBuses = async (req, res, next) => {
+/*export const getAllBuses = async (req, res, next) => {
   try {
     const limit = parseInt(req.query.limit, 10) || 0; // Default to 0 if limit is not provided or invalid
     const query = {};
 
-    // Get the current date
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0); // Set to start of the day
-
-    // Check if busDepartureDate is provided in 'YYYY-MM-DD' format
+    // Check if busDepartureDate is provided
     if (req.query.busDepartureDate) {
       const busDepartureDate = new Date(req.query.busDepartureDate);
       busDepartureDate.setHours(0, 0, 0, 0); // Set to start of the day
-
-      query.busDepartureDate = busDepartureDate;
-    } else {
-      // If busDepartureDate is not provided, filter for today and future buses
-      query.busDepartureDate = { $gte: currentDate };
+      query.busDepartureDate = { $gte: busDepartureDate }; // Get the given date and upcoming ones
     }
 
-    // Check if busCitiesAndTimes.cityName is provided
+    // Check if fromCity and toCity are provided
     if (req.query.fromCity && req.query.toCity) {
       query["busCitiesAndTimes"] = {
         $all: [
@@ -85,12 +77,14 @@ export const getAllBuses = async (req, res, next) => {
       };
     }
 
+    // Fetch buses based on the query
     const buses = await Bus.find(query)
-      .sort({ busDepartureDate: 1 })
+      .sort({ busDepartureDate: 1 }) // Sort by date ascending
       .limit(limit);
 
     // Filter buses to ensure 'fromCity' comes before 'toCity'
     const filteredBuses = buses.filter((bus) => {
+      if (!Array.isArray(bus.busCitiesAndTimes)) return false; // Ensure busCitiesAndTimes is an array
       const fromIndex = bus.busCitiesAndTimes.findIndex(
         (city) => city.cityName === req.query.fromCity
       );
@@ -100,11 +94,90 @@ export const getAllBuses = async (req, res, next) => {
       return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
     });
 
+    // Return the filtered buses
     res.status(200).json(filteredBuses);
   } catch (err) {
+    console.error("Error fetching buses:", err);
+    next(err);
+  }
+};*/
+
+// Helper function to safely escape regex special characters
+const escapeRegex = (text) => {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
+
+//get all buses
+export const getAllBuses = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit, 10) || 0;
+    const query = {};
+
+    // Handle date filtering
+    if (req.query.busDepartureDate) {
+      const busDepartureDate = new Date(req.query.busDepartureDate);
+      busDepartureDate.setHours(0, 0, 0, 0);
+      query.busDepartureDate = { $gte: busDepartureDate };
+    }
+
+    // Handle case-insensitive city matching with regex escaping
+    if (req.query.fromCity && req.query.toCity) {
+      const escapedFrom = escapeRegex(req.query.fromCity);
+      const escapedTo = escapeRegex(req.query.toCity);
+
+      query.busCitiesAndTimes = {
+        $all: [
+          { 
+            $elemMatch: { 
+              cityName: { 
+                $regex: new RegExp(`^${escapedFrom}$`, 'i') 
+              } 
+            }
+          },
+          { 
+            $elemMatch: { 
+              cityName: { 
+                $regex: new RegExp(`^${escapedTo}$`, 'i') 
+              } 
+            }
+          }
+        ]
+      };
+    }
+
+    // Fetch buses from database
+    const buses = await Bus.find(query)
+      .sort({ busDepartureDate: 1 })
+      .limit(limit);
+
+    // Case-insensitive post-filtering for city order validation
+    const filteredBuses = buses.filter(bus => {
+      if (!Array.isArray(bus.busCitiesAndTimes)) return false;
+
+      // Normalize city names for comparison
+      const fromCityLower = req.query.fromCity?.toLowerCase();
+      const toCityLower = req.query.toCity?.toLowerCase();
+
+      // Find indices case-insensitively
+      let fromIndex = -1;
+      let toIndex = -1;
+
+      bus.busCitiesAndTimes.forEach((city, index) => {
+        const cityLower = city.cityName?.toLowerCase();
+        if (cityLower === fromCityLower) fromIndex = index;
+        if (cityLower === toCityLower) toIndex = index;
+      });
+
+      return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
+    });
+
+    res.status(200).json(filteredBuses);
+  } catch (err) {
+    console.error("Error fetching buses:", err);
     next(err);
   }
 };
+
 
 //Extra
 export const countByFirstStation = async (req, res, next) => {

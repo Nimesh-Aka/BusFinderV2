@@ -45,8 +45,11 @@ const Search = ({ initialFrom = "", initialTo = "", initialDate = "" }) => {
       alert("Please fill in both the 'From' and 'To' fields.");
       return;
     }
+    
+    // If date is empty, set today's date
+    const searchDate = date?.trim() ? date : new Date().toISOString().split("T")[0];
 
-    navigate("/buses", { state: { from, to, date } });
+    navigate("/buses", { state: { from, to, date: searchDate } });
   };
 
   const handleKeyDown = (e) => {
@@ -218,6 +221,7 @@ const Search = ({ initialFrom = "", initialTo = "", initialDate = "" }) => {
             Search
           </button>
         </div>
+
       </div>
     </motion.div>
   );

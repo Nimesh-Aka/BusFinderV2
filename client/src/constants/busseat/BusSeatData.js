@@ -20,7 +20,7 @@ const busSeatData = [
     { id: 'B16', status: 'available', price: 180 },
     { id: 'B18', status: 'available', price: 180 },
 
-    { id: '19', status: 'available', price: 180 },
+    { id: 'B19', status: 'available', price: 180 },
 
     { id: 'A1', status: 'booked', price: 180 },
     { id: 'A3', status: 'available', price: 180 },
