@@ -7,6 +7,7 @@ import {
   filterBuses,
   getAllBuses,
   getBus,
+  payment,
   updateBus,
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
@@ -35,5 +36,7 @@ router.get("/stationsList", allStationsNames)
 router.post("/filter", filterBuses);
 
 router.get("/countByFirstStation", countByFirstStation);
+
+router.post("/create-checkout-session", payment)
 
 export default router;

@@ -294,3 +294,51 @@ export const filterBuses = async (req, res, next) => {
     next(err);
   }
 };
+
+
+//payment
+import Stripe from 'stripe';
+
+export const payment = async (req, res, next) => {
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET);
+
+    const {totalCost, routeTo, busPlateNo, busName} = req.body; // Extract totalCost from request body
+    // Validate totalCost
+    if (!Number.isInteger(totalCost) || totalCost <= 0) {
+      return res.status(400).json({ success: false, message: 'Invalid total cost' });
+    }
+
+    // Validate routeTo
+    if (!routeTo) {
+      return res.status(400).json({ success: false, message: "RouteTo is required" });
+    }
+
+    // Convert totalCost to cents
+    const amountInCents = Math.round(Number(totalCost) * 100);
+
+    // Create a Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'lkr',
+            product_data: {
+              name: `Bus Name - ${busName} (${busPlateNo})` , // Use busPlateNo in the product name
+              description: `Route To - ${routeTo}`,
+            },
+            unit_amount: amountInCents, // Convert to cents
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `http://localhost:3000/bus-tickets/payment`,
+      cancel_url: `http://localhost:3000/bus-tickets/checkout`,
+    });
+    res.status(200).json(session);
+  } catch (err) {
+    next(err);
+  }
+};
