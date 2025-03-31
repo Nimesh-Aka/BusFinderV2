@@ -25,7 +25,7 @@ function App() {
                 },
                 {
                     path: "customers",
-                    element: <h1 className="title">Customers</h1>,
+                    element: <h1 className="title">Users</h1>,
                 },
                 {
                     path: "new-customer",
@@ -37,15 +37,15 @@ function App() {
                 },
                 {
                     path: "products",
-                    element: <h1 className="title">Products</h1>,
+                    element: <h1 className="title">Busses</h1>,
                 },
                 {
                     path: "new-product",
-                    element: <h1 className="title">New Product</h1>,
+                    element: <h1 className="title">Add Bus</h1>,
                 },
                 {
                     path: "inventory",
-                    element: <h1 className="title">Inventory</h1>,
+                    element: <h1 className="title">Update Bus</h1>,
                 },
                 {
                     path: "settings",

@@ -25,14 +25,14 @@ export const navbarLinks = [
         ],
     },
     {
-        title: "Customers",
+        title: "Users",
         links: [
             {
-                label: "Customers",
+                label: "Users",
                 icon: Users,
                 path: "/customers",
             },
-            {
+            /*{
                 label: "New customer",
                 icon: UserPlus,
                 path: "/new-customer",
@@ -41,24 +41,24 @@ export const navbarLinks = [
                 label: "Verified customers",
                 icon: UserCheck,
                 path: "/verified-customers",
-            },
+            }, */
         ],
     },
     {
-        title: "Products",
+        title: "Busses",    //change
         links: [
             {
-                label: "Products",
+                label: "Busses",    //change
                 icon: Package,
                 path: "/products",
             },
             {
-                label: "New product",
+                label: "Add Bus",     //change
                 icon: PackagePlus,
                 path: "/new-product",
             },
             {
-                label: "Inventory",
+                label: "Update Bus",   //change
                 icon: ShoppingBag,
                 path: "/inventory",
             },
