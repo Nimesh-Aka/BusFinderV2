@@ -14,6 +14,7 @@ const DashboardPage = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <h1 className="title">Dashboard</h1>
+            
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 <div className="card">
                     <div className="card-header">
@@ -172,6 +173,7 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </div>
+
             <div className="card">
                 <div className="card-header">
                     <p className="card-title">Top busses</p>
@@ -237,6 +239,8 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </div>
+
+
             <Footer />
         </div>
     );

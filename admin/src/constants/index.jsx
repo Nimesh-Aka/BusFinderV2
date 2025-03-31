@@ -30,7 +30,7 @@
                 {
                     label: "Users",
                     icon: Users,
-                    path: "/customers",
+                    path: "/users",
                 },
                 /*{
                     label: "New customer",
@@ -50,17 +50,17 @@
                 {
                     label: "Busses",    //change
                     icon: Package,
-                    path: "/products",
+                    path: "/busses",
                 },
                 {
                     label: "Add Bus",     //change
                     icon: PackagePlus,
-                    path: "/new-product",
+                    path: "/add-bus",
                 },
                 {
                     label: "Update Bus",   //change
                     icon: ShoppingBag,
-                    path: "/inventory",
+                    path: "/update-bus",
                 },
             ],
         },
