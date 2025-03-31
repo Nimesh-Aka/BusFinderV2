@@ -5,6 +5,7 @@ import Home from "./pages/Home/Home";
 import { BrowserRouter } from "react-router-dom";
 import SignUp from "./pages/SignUP/Signup";
 import SignIn from "./pages/SignIN/Signin";
+import Services from "./pages/Home/services/Services";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
 import Navbar from "./components/Navbar/Navbar";
@@ -26,10 +27,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/buses" element={<Ticket />} />
+          <Route path="/services" element={<div className="my-10 pt-10"><Services /></div>} />
           <Route path="/buses/:id" element={<Detail />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/about" element={<div className="my-10 pt-10"><About /> </div>} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/bus-tickets/checkout" element={<Checkout />} />
           <Route path="/bus-tickets/payment" element={<Invoice/>} />
