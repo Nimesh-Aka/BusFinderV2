@@ -181,6 +181,16 @@ export const getAllBuses = async (req, res, next) => {
   }
 };
 
+//get all bus collection
+export const getBusCollection = async (req, res, next) => {
+  try {
+    const buses = await Bus.find(); // Fetch all buses from the database
+    res.status(200).json(buses); // Return all buses
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 //Extra
 export const countByFirstStation = async (req, res, next) => {

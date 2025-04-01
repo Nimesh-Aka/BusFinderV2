@@ -7,6 +7,7 @@ import {
   deleteBus,
   filterBuses,
   getAllBuses,
+  getBusCollection,
   getBus,
   payment,
   updateBus
@@ -29,6 +30,9 @@ router.get("/find/:id", getBus);
 
 //get all buses
 router.get("/", getAllBuses);
+
+//get all bus collection
+router.get("/all", getBusCollection)
 
 //get all stations for searching
 router.get("/stationsList", allStationsNames)

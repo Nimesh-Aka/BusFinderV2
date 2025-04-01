@@ -171,7 +171,7 @@ const Addbus = () => {
                 {errors.busTicketPrice && <span className="text-red-500 text-sm">{errors.busTicketPrice}</span>}
               </div>
               <div>
-                <label className="block mb-2">Departure Date *</label>
+                <label className="block mb-2">Departure Date & Time *</label>
                 <input
                   type="datetime-local"
                   className="w-full p-2 border rounded"
@@ -242,7 +242,7 @@ const Addbus = () => {
             ))}
             <button
               type="button"
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-red-500 text-white px-4 py-2 rounded"
               onClick={() => addArrayItem('busCitiesAndTimes', { cityName: '', arrivalTime: '' })}
               disabled={formData.busCitiesAndTimes.length >= 50}
             >
@@ -282,7 +282,7 @@ const Addbus = () => {
               </select>
 
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+                className="bg-red-500 text-white px-4 py-2 rounded disabled:opacity-50"
                 onClick={addPredefinedSeat}
                 disabled={!selectedSeatNumber}
               >
