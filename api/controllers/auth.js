@@ -103,3 +103,13 @@ export const checkUniqueness = async (req, res, next) => {
     next(error);
   }
 };
+
+//get all users
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    next(error);
+  }
+};

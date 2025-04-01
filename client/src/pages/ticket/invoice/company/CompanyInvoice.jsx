@@ -14,31 +14,31 @@ const CompanyInvoice = () => {
 
       <div className="w-full px-4 py-7 space-y-1">
         <p className="text-sm text-neutral-600 font-normal">
-            Bill No.: 465
+            Bill No.: 037
         </p>
         <p className="text-sm text-neutral-600 font-normal">
-            date: 2025-01-08
+            date: 2025-01-04
         </p>
         <p className="text-sm text-neutral-600 font-normal">
-            Name: Hirusha Kularathna
+            Name: test10
         </p>
         <p className="text-sm text-neutral-600 font-normal">
-            From Matara <span className="text-xs">(buspark)</span>
+            From Akuressa <span className="text-xs">(buspark)</span>
         </p>
         <p className="text-sm text-neutral-600 font-normal">
             To Galle <span className="text-xs">(buspark)</span>
         </p>
         <p className="text-sm text-neutral-600 font-normal">
-            Dept. Time: 06:15 PM
+            Dept. Time: 09:00 AM
         </p>
         <p className="text-sm text-neutral-600 font-normal">
-            Seat No.: A2, A3, A4, B6
+            Seat No.: A13, A15, A17
         </p>
         <p className="text-sm text-neutral-600 font-normal">
-            Total Passenger: 04 Only
+            Total Passenger: 03 Only
         </p>
         <p className="text-sm text-neutral-600 font-normal">
-            Total Price: Rs.6400
+            Total Price: Rs.640
         </p>
         
         
@@ -52,7 +52,7 @@ const CompanyInvoice = () => {
                 <div className="flex items-center gap-x-2">
                   <FaPhone className="w-3 h-3 text-neutral-100" />
                   <p className="text-xm text-neutral-100 font-light">
-                  077-4444444
+                  077-6697324
                   </p>
                 </div>
               </div>

@@ -3,8 +3,6 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import { BrowserRouter } from "react-router-dom";
-import SignUp from "./pages/SignUP/Signup";
-import SignIn from "./pages/SignIN/Signin";
 import Services from "./pages/Home/services/Services";
 import About from "./pages/About/About";
 import Contact from "./pages/Contact/Contact";
@@ -16,6 +14,7 @@ import Detail from "./pages/ticket/detail/Detail"
 import LoginPopup from "./components/loginpopup/LoginPopup"
 import { AuthContextProvider } from "./Context/AuthContext";
 import Invoice from "./pages/ticket/invoice/Invoice"
+import PaymentSuccess from "./pages/ticket/checkout/passengerdata/payment/PaymentSuccess";
 
 function App() {
   const [showLogin, setShowLogin] = useState(false)
@@ -29,12 +28,11 @@ function App() {
           <Route path="/buses" element={<Ticket />} />
           <Route path="/services" element={<div className="my-10 pt-10"><Services /></div>} />
           <Route path="/buses/:id" element={<Detail />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/sign-in" element={<SignIn />} />
           <Route path="/about" element={<div className="my-10 pt-10"><About /> </div>} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/bus-tickets/checkout" element={<Checkout />} />
           <Route path="/bus-tickets/payment" element={<Invoice/>} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
         </Routes>
         <Footer />
       </AuthContextProvider>

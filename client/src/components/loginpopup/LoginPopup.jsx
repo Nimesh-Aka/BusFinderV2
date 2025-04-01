@@ -187,7 +187,22 @@ const LoginPopup = ({ setShowLogin }) => {
           userName: credentials.userName,
           password: credentials.password,
         });
+
+        // Save the token to localStorage
+        localStorage.setItem("token", res.data.token);
+
+        console.log("Login Response:", res.data); // Debugging
+
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+          console.log("Token saved:", localStorage.getItem("token")); // Debugging
+        } else {
+          console.error("Token missing in response");
+        }
+
+        // Dispatch user data to AuthContext
         dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+
         alert("Login successful!");
         setShowLogin(false);
         navigate("/");
