@@ -12,10 +12,9 @@
   "dependencies": {
     "@uidotdev/usehooks": "^2.4.1",
     "axios": "^1.8.4",
-<<<<<<< HEAD
+
     "caniuse-lite": "^1.0.30001707",
-=======
->>>>>>> ea57ecb76d2801cf21dc776731ca5df59358fe53
+
     "clsx": "^2.1.1",
     "lucide-react": "^0.441.0",
     "react": "^18.3.1",

@@ -1,6 +1,6 @@
 import React from "react";
 import userprop from "@/assets/userprop.png";
-import { PencilLine, Star, Trash } from "lucide-react";
+import {  Trash } from "lucide-react";
 
 const UserDetails = ({ user }) => {
     const { userName, email, mobile, isAdmin } = user;
