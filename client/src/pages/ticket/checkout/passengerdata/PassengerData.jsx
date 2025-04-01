@@ -52,9 +52,6 @@ const PassengerData = () => {
         </div>
       </div>
 
-      {/* Payment method */}
-      <PaymentMethod />
-
     </div>
   );
 };

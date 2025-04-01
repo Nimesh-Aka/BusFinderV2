@@ -1,13 +1,15 @@
 import express from "express";
 import {
   allStationsNames,
+  confirmBooking,
   countByFirstStation,
   createBus,
   deleteBus,
   filterBuses,
   getAllBuses,
   getBus,
-  updateBus,
+  payment,
+  updateBus
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -35,5 +37,9 @@ router.get("/stationsList", allStationsNames)
 router.post("/filter", filterBuses);
 
 router.get("/countByFirstStation", countByFirstStation);
+
+router.post("/create-checkout-session", payment)
+
+router.post("/confirmbooking", confirmBooking)
 
 export default router;

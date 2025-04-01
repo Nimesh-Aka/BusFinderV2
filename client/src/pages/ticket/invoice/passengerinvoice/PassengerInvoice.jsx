@@ -13,13 +13,13 @@
           <div className="flex items-center gap-x-3">
             <img src={BusImg} alt="bus img" className="w-auto h-12 object-cover object-center" />
             <h1 className="text-xl text-neutral-50 font-bold uppercase tracking-wider pt-1">
-              City Line
+            Akuressa-Galle Chandra Super Express
             </h1>
           </div>
 
           <div className="flex items-center gap-x-2">
             <p className="text-xl text-neutral-50 font-bold">
-              <span className="text-lg">(Bus No.)</span> Ba. 2 Kha 9704
+              <span className="text-lg">()</span> SP WE-2334
             </p>
           </div>
         </div>
@@ -28,25 +28,25 @@
           <div className="col-span-4 space-y-3.5">
             {/* Bill no, per seat, and date */}
             <div className="w-full flex items-center justify-between border-dashed border-b-2 border-neutral-200 pb-3">
-              <p className="text-base text-neutral-500 font-normal">Bill No.: 465</p>
-              <p className="text-base text-neutral-500 font-normal">NPR 1600 <span className="text-xs">/seat</span></p>
-              <p className="text-base text-neutral-500 font-normal">Date: 2025-01-08</p>
+              <p className="text-base text-neutral-500 font-normal">Bill No.: 037</p>
+              <p className="text-base text-neutral-500 font-normal">NPR 160 <span className="text-xs">/seat</span></p>
+              <p className="text-base text-neutral-500 font-normal">Date: 2025-01-04</p>
             </div>
 
             {/* Passenger detail */}
             <div className="w-full flex items-center justify-between">
               <div className="space-y-1.5">
                 <p className="text-base text-neutral-500 font-normal">
-                  Name of Passenger: <span className="font-medium">Hirusha Kularathna</span>
+                  Name of Passenger: <span className="font-medium">test10</span>
                 </p>
                 <p className="text-base text-neutral-500 font-normal">
-                  Total Seat No.: <span className="font-medium">A2, A3, A4, B6</span>
+                  Total Seat No.: <span className="font-medium">A13, A15, A17</span>
                 </p>
                 <p className="text-base text-neutral-500 font-normal">
-                  Pickup Station: <span className="font-medium">Matara</span>
+                  Pickup Station: <span className="font-medium">Akuressa</span>
                 </p>
                 <p className="text-base text-neutral-500 font-normal">
-                  Total No. of Passenger: <span className="font-medium">04 Only</span>
+                  Total No. of Passenger: <span className="font-medium">03 Only</span>
                 </p>
                 
               </div>
@@ -54,7 +54,7 @@
               <div className="space-y-4 flex items-center justify-center flex-col">
                 <div className="space-y-1 text-center">
                   <p className="text-base text-neutral-600 font-normal">Total Price:</p>
-                  <h1 className="text-xl text-neutral-600 font-bold">Rs. 6400</h1>
+                  <h1 className="text-xl text-neutral-600 font-bold">Rs. 480</h1>
                 </div>
                 <div className="w-full px-3 rounded-full bg-green-500/5 border border-green-600 text-green-600 text-sm font-medium flex items-center justify-center gap-2">
                   <FaCheckCircle size={16} />
@@ -73,15 +73,15 @@
             <div className="w-full flex items-center justify-between 
             border-dashed border-t-2 border-neutral-200 pt-3">
               <p className="text-base text-neutral-600 font-normal">
-                Matara
+                Akuressa
                 <span className="text-neutral-400 px-2">-----</span>
                 Galle
               </p>
               <p className="text-base text-neutral-600 font-normal">
-                Arrive at 06:15 PM
+                Arrive at 09:00 AM
               </p>
               <p className="text-base text-neutral-600 font-normal">
-                Departure at 07:35 PM
+                Departure at 09:00 AM
               </p>
               
             </div>
@@ -103,7 +103,7 @@
           <div className="flex items-center gap-x-2">
             <FaPhone className="w-3 h-3 text-neutral-100" />
             <p className="text-xm text-neutral-100 font-light">
-            077-4444444, 041-7777777
+            077-6697324, 041-2223524
             </p>
           </div>
         </div>

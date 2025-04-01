@@ -1,4 +1,7 @@
 import Bus from "../models/Bus.js";
+import Stripe from 'stripe';
+import Booking from "../models/Booking.js";
+import mongoose from "mongoose";
 
 //create a bus
 export const createBus = async (req, res, next) => {
@@ -292,5 +295,118 @@ export const filterBuses = async (req, res, next) => {
   } catch (err) {
     console.error('Error filtering buses:', err);
     next(err);
+  }
+};
+
+
+// Payment Function
+export const payment = async (req, res, next) => {
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET);
+    const { userId, totalCost, routeTo, busPlateNo, busName, busId, selectedSeats } = req.body;
+
+    // Convert busId to ObjectId
+    const busObjectId = new mongoose.Types.ObjectId(busId);
+
+    // Convert totalCost to cents
+    const amountInCents = Math.round(Number(totalCost) * 100);
+
+    // Log debug info
+    console.log("Selected Seats:", selectedSeats);
+    console.log("Bus ID:", busId);
+
+    // Create a Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [{
+        price_data: {
+          currency: 'lkr',
+          product_data: {
+            name: `Bus Name - ${busName} (${busPlateNo})`,
+            description: `Route To - ${routeTo}`,
+          },
+          unit_amount: amountInCents,
+        },
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: `http://localhost:3000/bus-tickets/payment`,
+      cancel_url: `http://localhost:3000/bus-tickets/checkout`,
+    });
+
+    // Save booking details in DB
+    const newBooking = new Booking({
+      userId,
+      busId: busObjectId,
+      selectedSeats,
+      totalCost,
+      routeTo,
+      paymentStatus: "pending",
+    });
+
+    await newBooking.save();
+    console.log("Booking saved:", newBooking);
+
+    // Check if bus exists
+    const bus = await Bus.findById(busObjectId);
+    if (!bus) {
+      console.error("Bus not found.");
+      return res.status(404).json({ error: "Bus not found" });
+    }
+    console.log("Bus Found:", bus);
+
+    // Update seat availability
+    const updateResult = await Bus.updateMany(
+      { _id: busObjectId, "seats.seatNumber": { $in: selectedSeats } },
+      { $set: { "seats.$.availability": "booked" } }
+    );
+
+    console.log("Seats update result:", updateResult);
+
+    res.status(200).json(session);
+  } catch (err) {
+    console.error("Error in payment function:", err);
+    next(err);
+  }
+};
+
+// Confirm Booking Function
+export const confirmBooking = async (req, res, next) => {
+  try {
+    const { busId, selectedSeats, sessionId } = req.body;
+
+    if (!busId || !selectedSeats || selectedSeats.length === 0 || !sessionId) {
+      return res.status(400).json({ error: "Invalid request. Missing data." });
+    }
+
+    console.log("Received Booking Request for Bus:", busId);
+    console.log("Seats to Update:", selectedSeats);
+
+    // Find the bus
+    const bus = await Bus.findById(busId);
+    if (!bus) {
+      return res.status(404).json({ error: "Bus not found." });
+    }
+
+    // Update seat availability
+    let updated = false;
+    bus.seats = bus.seats.map(seat => {
+      if (selectedSeats.includes(seat.seatNumber) && seat.availability === "available") {
+        seat.availability = "booked";
+        updated = true;
+      }
+      return seat;
+    });
+
+    if (!updated) {
+      return res.status(400).json({ error: "Seats not updated. Check seat numbers and availability." });
+    }
+
+    // Save the updated bus
+    await bus.save();
+    res.json({ message: "Seats successfully booked!", bookedSeats: selectedSeats });
+  } catch (error) {
+    console.error("Error confirming booking:", error);
+    res.status(500).json({ error: "Internal server error." });
   }
 };
