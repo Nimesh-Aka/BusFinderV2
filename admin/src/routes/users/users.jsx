@@ -1,84 +1,64 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import UserDetails from "../../components/UserDetails";
 
-import { topProducts } from "@/constants";
-import { PencilLine, Star, Trash } from "lucide-react";
-import { Footer } from "@/layouts/footer";
+const URL = "http://localhost:8000/api/users"; // Backend API endpoint
 
-const users = () => {
+const UsersPage = () => {
+    const [users, setUsers] = useState([]); // State for users
+    const [loading, setLoading] = useState(true); // State for loading indicator
+    const [error, setError] = useState(null); // State for error handling
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                setLoading(true); // Start loading
+                const response = await axios.get(URL); // Fetch users from backend
+
+                console.log("Fetched Users:", response); // Debug log
+                console.log("response Users:", response.data); // Debug log
+                console.log("frist Users:", response.data[0]); // Debug log
+                console.log("frist User name:", response.data[0].userName); // Debug log
+
+                if (response.data) {
+                    const usersArray = Array.isArray(response.data) ? response.data : response.data.users;
+                    setUsers(usersArray && Array.isArray(usersArray) ? usersArray : []);
+                } else {
+                    setUsers([]); // Handle unexpected response structure
+                }
+            } catch (err) {
+                console.error("Error fetching users:", err);
+                setError("Failed to fetch users. Please try again later.");
+            } finally {
+                setLoading(false); // Stop loading
+            }
+        };
+        fetchUsers();
+    }, []);
+
+    if (loading) return <div>Loading...</div>; // Display loading indicator
+    if (error) return <div>{error}</div>; // Display error message
+
     return (
-<div className="flex flex-col gap-y-4">
-      <h1 className="title">Users</h1>
-
-      <div className="card">
-        <div className="card-header">
-          <p className="card-title">Users</p>
+        <div>
+            <h1 className="title">Users</h1>
+            <br />
+            
+              
+            <div>
+                {users.length > 0 ? (
+                    users.map((user) => (
+                        <UserDetails
+                            key={user._id}
+                            user={user}
+                        /> // Display each user
+                    ))
+                ) : (
+                    <p>No users found.</p>
+                )}
+            </div>
         </div>
-        <div className="p-0 card-body">
-          <div className="relative h-[500px] w-full flex-shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
-            <table className="table">
-              <thead className="table-header">
-                <tr className="table-row">
-                  <th className="table-head"> </th>
-                  <th className="table-head">Busses</th>
-                  <th className="table-head">Price</th>
-                  <th className="table-head">Status</th>
-                  <th className="table-head">Rating</th>
-                  <th className="table-head">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="table-body">
-                {topProducts.map((product) => (
-                  <tr
-                    key={product.number}
-                    className="table-row"
-                  >
-                    <td className="table-cell">{product.number}</td>
-                    <td className="table-cell">
-                      <div className="flex w-max gap-x-4">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="object-cover rounded-lg size-14"
-                        />
-                        <div className="flex flex-col">
-                          <p>{product.name}</p>
-                          <p className="font-normal text-slate-600 dark:text-slate-400">{product.description}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="table-cell">${product.price}</td>
-                    <td className="table-cell">{product.status}</td>
-                    <td className="table-cell">
-                      <div className="flex items-center gap-x-2">
-                        <Star
-                          size={18}
-                          className="fill-yellow-600 stroke-yellow-600"
-                        />
-                        {product.rating}
-                      </div>
-                    </td>
-                    <td className="table-cell">
-                      <div className="flex items-center gap-x-4">
-                        <button className="text-red-500 dark:text-red-600">
-                          <PencilLine size={20} />
-                        </button>
-                        <button className="text-red-500">
-                          <Trash size={20} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+    );
+};
 
-
-      <Footer />
-    </div>
-    )
-}
-
-export default users
+export default UsersPage;
