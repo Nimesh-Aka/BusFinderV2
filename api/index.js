@@ -12,7 +12,7 @@ import cookieParser from "cookie-parser";
 const app = express(); //this line create a new web server
 
 dotenv.config();
-app.use(cors());//Allowing Other Websites to Talk to Your Server
+//Allowing Other Websites to Talk to Your Server
 
 const PORT = process.env.PORT || 8000;
 
@@ -37,6 +37,7 @@ mongoose.connection.on("connected", () => {
 
 //middlewares
 app.use(cookieParser());
+app.use(cors());
 app.use(express.json());
 
 //routes

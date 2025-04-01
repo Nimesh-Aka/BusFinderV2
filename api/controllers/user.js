@@ -1,4 +1,5 @@
-import User from "../models/Bus.js";
+
+import User from "../models/User.js";
 
 //update a user
 export const updateUser = async (req, res, next) => {
@@ -52,3 +53,7 @@ export const getAllUsers = async (req, res, next) => {
     next(err);
   }
 };
+
+
+
+

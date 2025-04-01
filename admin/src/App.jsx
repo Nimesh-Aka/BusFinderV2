@@ -4,6 +4,13 @@ import { ThemeProvider } from "@/contexts/theme-context";
 
 import Layout from "@/routes/layout";
 import DashboardPage from "@/routes/dashboard/page";
+import Analytics from "@/routes/analytics/analytics"
+import Reports from "@/routes/reports/reports"
+import Users from "@/routes/users/users"
+import Busses from "@/routes/busses/busses"
+import Addbus from "@/routes/add-bus/addbus"
+import Updatebus from "@/routes/update-bus/updatebus"
+import Settings from "@/routes/settings/settings"
 
 function App() {
     const router = createBrowserRouter([
@@ -17,40 +24,47 @@ function App() {
                 },
                 {
                     path: "analytics",
-                    element: <h1 className="title">Analytics</h1>,
+                    element: <Analytics/>,
                 },
                 {
                     path: "reports",
-                    element: <h1 className="title">Reports</h1>,
+                    element: <Reports/>,
                 },
+
+
                 {
-                    path: "customers",
-                    element: <h1 className="title">Users</h1>,
+                    path: "users",
+                    element: <Users/>,
                 },
-                {
+                /*{
                     path: "new-customer",
                     element: <h1 className="title">New Customer</h1>,
                 },
                 {
                     path: "verified-customers",
                     element: <h1 className="title">Verified Customers</h1>,
+                },*/
+
+
+                {
+                    path: "busses",
+                    element: <Busses/>,
                 },
                 {
-                    path: "products",
-                    element: <h1 className="title">Busses</h1>,
+                    path: "add-bus",
+                    element: <Addbus/>,
                 },
                 {
-                    path: "new-product",
-                    element: <h1 className="title">Add Bus</h1>,
+                    path: "update-bus",
+                    element: <Updatebus/>,
                 },
-                {
-                    path: "inventory",
-                    element: <h1 className="title">Update Bus</h1>,
-                },
+
+
                 {
                     path: "settings",
-                    element: <h1 className="title">Settings</h1>,
+                    element: <Settings/>,
                 },
+
             ],
         },
     ]);

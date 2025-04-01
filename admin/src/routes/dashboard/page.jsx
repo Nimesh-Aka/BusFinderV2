@@ -14,16 +14,17 @@ const DashboardPage = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <h1 className="title">Dashboard</h1>
+            
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 <div className="card">
                     <div className="card-header">
                         <div className="p-2 text-red-500 transition-colors rounded-lg w-fit bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
                             <Package size={26} />
                         </div>
-                        <p className="card-title">Total Products</p>
+                        <p className="card-title">Total Busses</p>
                     </div>
                     <div className="transition-colors card-body bg-slate-100 dark:bg-slate-950">
-                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">25,154</p>
+                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">500</p>
                         <span className="flex items-center px-2 py-1 font-medium text-red-500 border border-red-500 rounded-full w-fit gap-x-2 dark:border-red-600 dark:text-red-600">
                             <TrendingUp size={18} />
                             25%
@@ -35,10 +36,10 @@ const DashboardPage = () => {
                         <div className="p-2 text-red-500 transition-colors rounded-lg bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
                             <DollarSign size={26} />
                         </div>
-                        <p className="card-title">Total Paid Orders</p>
+                        <p className="card-title">Total Paid Sheets</p>
                     </div>
                     <div className="transition-colors card-body bg-slate-100 dark:bg-slate-950">
-                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">$16,000</p>
+                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">Rs.16,000</p>
                         <span className="flex items-center px-2 py-1 font-medium text-red-500 border border-red-500 rounded-full w-fit gap-x-2 dark:border-red-600 dark:text-red-600">
                             <TrendingUp size={18} />
                             12%
@@ -50,10 +51,10 @@ const DashboardPage = () => {
                         <div className="p-2 text-red-500 transition-colors rounded-lg bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
                             <Users size={26} />
                         </div>
-                        <p className="card-title">Total Customers</p>
+                        <p className="card-title">Total Users</p>
                     </div>
                     <div className="transition-colors card-body bg-slate-100 dark:bg-slate-950">
-                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">15,400k</p>
+                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">10000</p>
                         <span className="flex items-center px-2 py-1 font-medium text-red-500 border border-red-500 rounded-full w-fit gap-x-2 dark:border-red-600 dark:text-red-600">
                             <TrendingUp size={18} />
                             15%
@@ -65,10 +66,10 @@ const DashboardPage = () => {
                         <div className="p-2 text-red-500 transition-colors rounded-lg bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
                             <CreditCard size={26} />
                         </div>
-                        <p className="card-title">Sales</p>
+                        <p className="card-title">On the Road Today</p>
                     </div>
                     <div className="transition-colors card-body bg-slate-100 dark:bg-slate-950">
-                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">12,340</p>
+                        <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">30</p>
                         <span className="flex items-center px-2 py-1 font-medium text-red-500 border border-red-500 rounded-full w-fit gap-x-2 dark:border-red-600 dark:text-red-600">
                             <TrendingUp size={18} />
                             19%
@@ -147,7 +148,7 @@ const DashboardPage = () => {
                 </div>
                 <div className="col-span-1 card md:col-span-2 lg:col-span-3">
                     <div className="card-header">
-                        <p className="card-title">Recent Sales</p>
+                        <p className="card-title">Recent Users</p>
                     </div>
                     <div className="card-body h-[300px] overflow-auto p-0">
                         {recentSalesData.map((sale) => (
@@ -166,15 +167,16 @@ const DashboardPage = () => {
                                         <p className="text-sm text-slate-600 dark:text-slate-400">{sale.email}</p>
                                     </div>
                                 </div>
-                                <p className="font-medium text-slate-900 dark:text-slate-50">${sale.total}</p>
+                                <p className="font-medium text-slate-900 dark:text-slate-50">Rs.{sale.total}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </div>
+
             <div className="card">
                 <div className="card-header">
-                    <p className="card-title">Top Orders</p>
+                    <p className="card-title">Top busses</p>
                 </div>
                 <div className="p-0 card-body">
                     <div className="relative h-[500px] w-full flex-shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
@@ -182,7 +184,7 @@ const DashboardPage = () => {
                             <thead className="table-header">
                                 <tr className="table-row">
                                     <th className="table-head">#</th>
-                                    <th className="table-head">Product</th>
+                                    <th className="table-head">Busses</th>
                                     <th className="table-head">Price</th>
                                     <th className="table-head">Status</th>
                                     <th className="table-head">Rating</th>
@@ -237,6 +239,8 @@ const DashboardPage = () => {
                     </div>
                 </div>
             </div>
+
+
             <Footer />
         </div>
     );

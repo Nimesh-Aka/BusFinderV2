@@ -26,6 +26,6 @@ router.get("/checkAdmin/:id", verifyAdmin, (req, res, next) => {
 router.put("/:id", verifyUser, updateUser);
 router.delete("/:id", verifyUser, deleteUser);
 router.get("/:id", verifyUser, getUser);
-router.get("/", verifyAdmin, getAllUsers);
+router.get("/", getAllUsers);
 
 export default router;
