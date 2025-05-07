@@ -1,23 +1,26 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { FaBars } from 'react-icons/fa';
+import React, { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { FaBars } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
-import { AuthContext } from '../../Context/AuthContext';
+import { AuthContext } from "../../Context/AuthContext";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
-const Navbar = ({setShowLogin}) => {
+const Navbar = ({ setShowLogin }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
   const [open, setOpen] = useState(false);
 
-  const {user, dispatch} = useContext(AuthContext);
+  const { user, dispatch } = useContext(AuthContext);
+  console.log("User in Navbar:", user);
   //Navbar items
   const navItems = [
     { label: "Home", link: "/" },
     { label: "Services", link: "/services" },
     { label: "Tickets", link: "/bus-tickets" },
-    { label: "About", link: "/about" }
-  ]
+    { label: "About", link: "/about" },
+  ];
 
   //handle click open
   const handleOpen = () => {
@@ -41,10 +44,10 @@ const Navbar = ({setShowLogin}) => {
       }
       setScrollPosition(currentScrollState);
     };
-     
-    window.addEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [scrollPosition]);
 
@@ -89,18 +92,25 @@ const Navbar = ({setShowLogin}) => {
               </li>
             ))}
           </ul>
-
           {/* Button */}
           {user ? (
-            <div className="flex items-center gap-4">
-             <span className="text-xl font-bold text-black hover:text-primary-dark transition duration-300 ease-in-out cursor-pointer flex items-center">
-              <span role="img" aria-label="profile" className="mr-2">👤</span>
-              {user.userName}
-            </span>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-lg font-medium shadow-sm">
+                {user.user?.userName
+                  ? user.user.userName.charAt(0).toUpperCase()
+                  : "?"}
+              </div>
+              <span className="text-base font-semibold text-black hover:text-primary transition duration-300 ease-in-out ml-1">
+                {user.user?.userName || "User"}
+              </span>
 
               <button
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
-                onClick={() => dispatch({ type: "LOGOUT" })}
+                className="ml-3 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+                onClick={() => {
+                  alert("Logout successful");
+                  dispatch({ type: "LOGOUT" });
+                }}
+                
               >
                 Logout
               </button>
@@ -109,7 +119,7 @@ const Navbar = ({setShowLogin}) => {
             <div className="flex items-center justify-center">
               <button
                 className="w-full px-6 py-2.5 btn md:w-fit md:px-4 md:py-1 bg-primary hover:bg-transparent border border-primary hover:border-primary md:rounded-full rounded-xl 
-                  text-base font-normal text-neutral-50 hover:text-primary ease-in-out duration-300"
+text-base font-normal text-neutral-50 hover:text-primary ease-in-out duration-300"
                 onClick={() => setShowLogin(true)}
               >
                 Sign in
@@ -120,6 +130,6 @@ const Navbar = ({setShowLogin}) => {
       </div>
     </nav>
   );
-}
+};
 
-export default Navbar
+export default Navbar;
