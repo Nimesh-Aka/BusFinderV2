@@ -1,5 +1,5 @@
 import Bus from "../models/Bus.js";
-import Stripe from 'stripe';
+import Stripe from "stripe";
 import Booking from "../models/Booking.js";
 import mongoose from "mongoose";
 
@@ -107,7 +107,7 @@ export const getBus = async (req, res, next) => {
 
 // Helper function to safely escape regex special characters
 const escapeRegex = (text) => {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
 //get all buses
@@ -130,21 +130,21 @@ export const getAllBuses = async (req, res, next) => {
 
       query.busCitiesAndTimes = {
         $all: [
-          { 
-            $elemMatch: { 
-              cityName: { 
-                $regex: new RegExp(`^${escapedFrom}$`, 'i') 
-              } 
-            }
+          {
+            $elemMatch: {
+              cityName: {
+                $regex: new RegExp(`^${escapedFrom}$`, "i"),
+              },
+            },
           },
-          { 
-            $elemMatch: { 
-              cityName: { 
-                $regex: new RegExp(`^${escapedTo}$`, 'i') 
-              } 
-            }
-          }
-        ]
+          {
+            $elemMatch: {
+              cityName: {
+                $regex: new RegExp(`^${escapedTo}$`, "i"),
+              },
+            },
+          },
+        ],
       };
     }
 
@@ -154,7 +154,7 @@ export const getAllBuses = async (req, res, next) => {
       .limit(limit);
 
     // Case-insensitive post-filtering for city order validation
-    const filteredBuses = buses.filter(bus => {
+    const filteredBuses = buses.filter((bus) => {
       if (!Array.isArray(bus.busCitiesAndTimes)) return false;
 
       // Normalize city names for comparison
@@ -190,7 +190,6 @@ export const getBusCollection = async (req, res, next) => {
     next(err);
   }
 };
-
 
 //Extra
 export const countByFirstStation = async (req, res, next) => {
@@ -291,12 +290,14 @@ export const filterBuses = async (req, res, next) => {
     if (busDepartureDate) {
       const searchDate = new Date(busDepartureDate);
       searchDate.setHours(0, 0, 0, 0);
-      
-      filteredBuses = filteredBuses.map(bus => {
+
+      filteredBuses = filteredBuses.map((bus) => {
         const busDate = new Date(bus.busDepartureDate);
         busDate.setHours(0, 0, 0, 0);
-        const daysDifference = Math.floor((busDate - searchDate) / (1000 * 60 * 60 * 24));
-        return {...bus.toObject(), daysDifference};
+        const daysDifference = Math.floor(
+          (busDate - searchDate) / (1000 * 60 * 60 * 24)
+        );
+        return { ...bus.toObject(), daysDifference };
       });
     }
 
@@ -352,26 +353,33 @@ export const filterBuses = async (req, res, next) => {
     if (filteredBuses.length === 0) {
       return res.status(200).json(-1);
     }
-    
+
     // Remove the temporary daysDifference property before sending response
-    filteredBuses = filteredBuses.map(bus => {
+    filteredBuses = filteredBuses.map((bus) => {
       const { daysDifference, ...busWithoutDaysDifference } = bus;
       return busWithoutDaysDifference;
     });
-    
+
     res.status(200).json(filteredBuses);
   } catch (err) {
-    console.error('Error filtering buses:', err);
+    console.error("Error filtering buses:", err);
     next(err);
   }
 };
-
 
 // Payment Function
 export const payment = async (req, res, next) => {
   try {
     const stripe = new Stripe(process.env.STRIPE_SECRET);
-    const { userId, totalCost, routeTo, busPlateNo, busName, busId, selectedSeats } = req.body;
+    const {
+      userId,
+      totalCost,
+      routeTo,
+      busPlateNo,
+      busName,
+      busId,
+      selectedSeats,
+    } = req.body;
 
     // Convert busId to ObjectId
     const busObjectId = new mongoose.Types.ObjectId(busId);
@@ -385,24 +393,26 @@ export const payment = async (req, res, next) => {
 
     // Create a Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      line_items: [{
-        price_data: {
-          currency: 'lkr',
-          product_data: {
-            name: `Bus Name - ${busName} (${busPlateNo})`,
-            description: `Route To - ${routeTo}`,
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "lkr",
+            product_data: {
+              name: `Bus Name - ${busName} (${busPlateNo})`,
+              description: `Route To - ${routeTo}`,
+            },
+            unit_amount: amountInCents,
           },
-          unit_amount: amountInCents,
+          quantity: 1,
         },
-        quantity: 1,
-      }],
-      mode: 'payment',
-      success_url: `http://localhost:3000/bus-tickets/payment`,
+      ],
+      mode: "payment",
+      success_url: `http://localhost:3000/bus-tickets/payment?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `http://localhost:3000/bus-tickets/checkout`,
     });
 
-    // Save booking details in DB
+    // In your payment function, modify the newBooking creation:
     const newBooking = new Booking({
       userId,
       busId: busObjectId,
@@ -410,6 +420,7 @@ export const payment = async (req, res, next) => {
       totalCost,
       routeTo,
       paymentStatus: "pending",
+      stripeSessionId: session.id, // Add this line to store session ID
     });
 
     await newBooking.save();
@@ -458,8 +469,11 @@ export const confirmBooking = async (req, res, next) => {
 
     // Update seat availability
     let updated = false;
-    bus.seats = bus.seats.map(seat => {
-      if (selectedSeats.includes(seat.seatNumber) && seat.availability === "available") {
+    bus.seats = bus.seats.map((seat) => {
+      if (
+        selectedSeats.includes(seat.seatNumber) &&
+        seat.availability === "available"
+      ) {
         seat.availability = "booked";
         updated = true;
       }
@@ -467,14 +481,73 @@ export const confirmBooking = async (req, res, next) => {
     });
 
     if (!updated) {
-      return res.status(400).json({ error: "Seats not updated. Check seat numbers and availability." });
+      return res
+        .status(400)
+        .json({
+          error: "Seats not updated. Check seat numbers and availability.",
+        });
     }
 
     // Save the updated bus
     await bus.save();
-    res.json({ message: "Seats successfully booked!", bookedSeats: selectedSeats });
+    res.json({
+      message: "Seats successfully booked!",
+      bookedSeats: selectedSeats,
+    });
   } catch (error) {
     console.error("Error confirming booking:", error);
     res.status(500).json({ error: "Internal server error." });
+  }
+};
+
+export const getBookingBySessionId = async (req, res, next) => {
+  try {
+    const { session_id } = req.params;
+    console.log("Looking for booking with session ID:", session_id);
+
+    // Find the booking by session ID and populate both bus and user information
+    const booking = await Booking.findOne({ stripeSessionId: session_id })
+      .populate({
+        path: "busId",
+        select:
+          "busName busType busPlateNo busDepartureDate busCitiesAndTimes seats",
+      })
+      .populate({
+        path: "userId",
+        select: "email username userName name",
+      });
+
+    if (!booking) {
+      return res
+        .status(404)
+        .json({ error: "Booking not found with this session ID" });
+    }
+
+    // Check if the booking has a payment status of "pending"
+    if (booking.paymentStatus === "pending") {
+      // Update booking status to "confirmed"
+      booking.paymentStatus = "confirmed";
+      await booking.save();
+      
+      // Get the selected seats and bus ID from the booking
+      const selectedSeats = booking.selectedSeats;
+      const busObjectId = booking.busId._id;
+      
+      // Update seat availability for each selected seat
+      for (const seatId of selectedSeats) {
+        await Bus.updateOne(
+          { _id: busObjectId, "seats._id": seatId },
+          { $set: { "seats.$.availability": "booked" } }
+        );
+      }
+      
+      console.log("Seats marked as booked");
+    }
+
+    console.log("Booking with user info:", booking);
+    res.status(200).json(booking);
+  } catch (err) {
+    console.error("Error fetching booking by session ID:", err);
+    next(err);
   }
 };
