@@ -13,8 +13,6 @@ const Ticket = () => {
   const location = useLocation();
   const { from, to, date } = location.state || { from: "", to: "", date: "" };
 
-  //console.log(from + " " + to + " " + date)
-
   // Construct API query with route parameters
   let queryString = "/buses?";
   const params = [];
@@ -23,11 +21,10 @@ const Ticket = () => {
   if (date) params.push(`busDepartureDate=${date}`);
   queryString += params.join("&");
 
-  //console.log(queryString)
 
   const { data, loading, error } = useFetch(queryString);
 
-  //console.log(data)
+  console.log("Clicking search button in under want to chnage route: ",data)
 
   const [filteredBuses, setFilteredBuses] = useState(null);
 
@@ -43,9 +40,6 @@ const Ticket = () => {
   // Determine buses to display
   const busesToDisplay = filteredBuses !== null ? filteredBuses : [];
 
-  /*console.log("filteredBuses", filteredBuses)
-  console.log("busesToDisplay", busesToDisplay)
-  console.log("busesToDisplay.length", busesToDisplay.length)*/
 
   return (
     <div className="w-full pb-16 space-y-12">
@@ -97,13 +91,6 @@ const Ticket = () => {
                 </p>
               </div>
             )}
-
-            <div className="flex items-center justify-center py-5 w-full">
-              <button className="flex items-center justify-center px-8 py-3 text-base font-semibold duration-300 ease-in-out border-2 bg-primary hover:bg-transparent border-primary hover:border-primary rounded-xl text-white gap-x-2 hover:text-primary">
-                <GrRefresh />
-                Load More
-              </button>
-            </div>
 
           </div>
 

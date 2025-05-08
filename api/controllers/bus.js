@@ -262,44 +262,102 @@ export const filterBuses = async (req, res, next) => {
       );
     }
 
-    // Date Filter
+    // Date Filter - Modified to include the specified date and future dates
     if (busDepartureDate) {
-      const targetDate = new Date(busDepartureDate).toISOString().split("T")[0];
+      const targetDate = new Date(busDepartureDate);
+      targetDate.setHours(0, 0, 0, 0); // Set to start of day
+
       filteredBuses = filteredBuses.filter((bus) => {
-        const busDate = new Date(bus.busDepartureDate)
-          .toISOString()
-          .split("T")[0];
-        return busDate === targetDate;
+        const busDate = new Date(bus.busDepartureDate);
+        busDate.setHours(0, 0, 0, 0); // Set to start of day
+        return busDate >= targetDate; // Include this date and future dates
       });
     }
 
-    // Route Filter
+    // Route Filter - Made case-insensitive
     if (fromCity && toCity) {
       filteredBuses = filteredBuses.filter((bus) => {
         const fromIndex = bus.busCitiesAndTimes.findIndex(
-          (c) => c.cityName === fromCity
+          (c) => c.cityName.toLowerCase() === fromCity.toLowerCase()
         );
         const toIndex = bus.busCitiesAndTimes.findIndex(
-          (c) => c.cityName === toCity
+          (c) => c.cityName.toLowerCase() === toCity.toLowerCase()
         );
         return fromIndex !== -1 && toIndex !== -1 && fromIndex < toIndex;
       });
     }
 
-    // Sorting
-    switch (sortBy) {
-      case "priceAsc":
-        filteredBuses.sort((a, b) => a.busTicketPrice - b.busTicketPrice);
-        break;
-      case "priceDesc":
-        filteredBuses.sort((a, b) => b.busTicketPrice - a.busTicketPrice);
-        break;
+    // Add number of days from search date as a property for sorting
+    if (busDepartureDate) {
+      const searchDate = new Date(busDepartureDate);
+      searchDate.setHours(0, 0, 0, 0);
+      
+      filteredBuses = filteredBuses.map(bus => {
+        const busDate = new Date(bus.busDepartureDate);
+        busDate.setHours(0, 0, 0, 0);
+        const daysDifference = Math.floor((busDate - searchDate) / (1000 * 60 * 60 * 24));
+        return {...bus.toObject(), daysDifference};
+      });
     }
 
-    // **Return -1 if no matching buses found**
+    // Sorting - Modified to prioritize date, then price
+    switch (sortBy) {
+      case "priceAsc":
+        // First sort by date (closest first), then by price (cheapest first)
+        filteredBuses.sort((a, b) => {
+          // If dates are different, sort by date
+          if (a.daysDifference !== b.daysDifference) {
+            return a.daysDifference - b.daysDifference;
+          }
+          // If dates are the same, sort by price
+          return a.busTicketPrice - b.busTicketPrice;
+        });
+        break;
+      case "priceDesc":
+        // First sort by date (closest first), then by price (most expensive first)
+        filteredBuses.sort((a, b) => {
+          // If dates are different, sort by date
+          if (a.daysDifference !== b.daysDifference) {
+            return a.daysDifference - b.daysDifference;
+          }
+          // If dates are the same, sort by price
+          return b.busTicketPrice - a.busTicketPrice;
+        });
+        break;
+      default:
+        // Default: sort by date (closest first), then by price (cheapest first)
+        filteredBuses.sort((a, b) => {
+          // If busDepartureDate is provided, sort by daysDifference
+          if (busDepartureDate) {
+            if (a.daysDifference !== b.daysDifference) {
+              return a.daysDifference - b.daysDifference;
+            }
+          } else {
+            // If no busDepartureDate provided, sort by actual date
+            const dateA = new Date(a.busDepartureDate);
+            const dateB = new Date(b.busDepartureDate);
+            if (dateA.getTime() !== dateB.getTime()) {
+              return dateA - dateB;
+            }
+          }
+          // Then sort by price
+          return a.busTicketPrice - b.busTicketPrice;
+        });
+    }
+
+    // Log results for debugging
+    console.log(`Found ${filteredBuses.length} buses matching the criteria`);
+
+    // Return -1 if no matching buses found
     if (filteredBuses.length === 0) {
       return res.status(200).json(-1);
     }
+    
+    // Remove the temporary daysDifference property before sending response
+    filteredBuses = filteredBuses.map(bus => {
+      const { daysDifference, ...busWithoutDaysDifference } = bus;
+      return busWithoutDaysDifference;
+    });
     
     res.status(200).json(filteredBuses);
   } catch (err) {
