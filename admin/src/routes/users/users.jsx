@@ -44,6 +44,13 @@ const UsersPage = () => {
             <h1 className="title">Users</h1>
             <br />
             
+            {/* Total Users Count */}
+            <div className="card">
+                <div className="card-header">
+                    <p className="card-title">Total Users: {users.length}</p>
+                </div>
+            </div>
+            <br />
               
             <div>
                 {users.length > 0 ? (
