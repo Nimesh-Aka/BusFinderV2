@@ -607,3 +607,37 @@ export const getAllBusesAdmin = async (req, res, next) => {
   }
 }
 
+
+
+
+// Get all bookings with user details and costs (sorted by most recent first)
+export const getBookingUsers = async (req, res, next) => {
+  try {
+    const bookings = await Booking.find()
+      .sort({ createdAt: -1 }) // Sort by creation date descending (newest first)
+      .populate({
+        path: "userId",
+        select: "userName email",
+      })
+      .select("userId selectedSeats totalCost paymentStatus createdAt")
+      .lean();
+
+    // Format the response with human-readable date
+    const formattedBookings = bookings.map(booking => ({
+      name: booking.userId?.userName || "N/A",
+      email: booking.userId?.email || "N/A",
+      totalCost: booking.totalCost,
+      paymentStatus: booking.paymentStatus,
+      bookingDate: new Date(booking.createdAt).toLocaleString(), // Format date
+      seatsBooked: booking.selectedSeats.length,
+      lastPaid: booking.paymentStatus === "confirmed" 
+               ? new Date(booking.createdAt).toLocaleString()
+               : "N/A"
+    }));
+
+    res.status(200).json(formattedBookings);
+  } catch (err) {
+    next(err);
+  }
+};
+
