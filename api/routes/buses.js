@@ -1,3 +1,4 @@
+
   import express from "express";
   import {
     allStationsNames,
@@ -14,15 +15,42 @@
     getBookingBySessionId
   } from "../controllers/bus.js";
 
+import express from "express";
+import {
+  allStationsNames,
+  confirmBooking,
+  countByFirstStation,
+  createBus,
+  deleteBus,
+  filterBuses,
+  getAllBuses,
+  getBusCollection,
+  getBus,
+  payment,
+  updateBus,
+  getBookingBySessionId,
+  getAllBusesAdmin
+} from "../controllers/bus.js";
+import { verifyAdmin } from "../utils/verifyToken.js";
+
+
   import { verifyAdmin } from "../utils/verifyToken.js";
 
   const router = express.Router();
+
 
   //create
   router.post("/", createBus); //removed verifyAdmin from this line
 
   //update bus
   router.put("/:id", verifyAdmin, updateBus);
+
+//update bus
+router.put("/:id", updateBus);
+
+//delete bus
+router.delete("/:id", deleteBus);
+
 
   //delete bus
   router.delete("/:id", verifyAdmin, deleteBus);
@@ -48,6 +76,14 @@
 
   router.post("/confirmbooking", confirmBooking)
 
+
   router.get("/booking/:session_id", getBookingBySessionId);
 
   export default router;
+
+//Adimin
+router.get("/allBuses", getAllBusesAdmin)
+
+
+export default router;
+
