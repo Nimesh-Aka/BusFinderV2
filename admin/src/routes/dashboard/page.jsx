@@ -22,22 +22,6 @@ import {
   Users,
 } from "lucide-react";
 
-const URL = "http://localhost:8000/api/buses/bookings/users";
-
-const fetchHandler = async () => {
-  return await axios.get(URL)
-  .then((response) => {
-    console.log("Fetched Users:", response); // Debug log
-    console.log("response Users:", response.data); // Debug log
-    console.log("frist Users:", response.data[0]); // Debug log
-    console.log("frist User name:", response.data[0].userName); // Debug log
-    return response.data;
-  })
-  .catch((error) => {
-    console.error("Error fetching users:", error);
-  });
-};
-
 const DashboardPage = () => {
   const [buses, setBuses] = useState([]);
   const [users, setUsers] = useState([]);
@@ -46,12 +30,7 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { theme } = useTheme();
-  const [recentUsers, setRecentUsers] = useState([]);
-
-  
-  useEffect(() => {
-    fetchHandler().then((data) => setRecentUsers(data.recentUsers));
-  }, []);
+  const [recentTransactions, setRecentTransactions] = useState([]);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-LK", {
@@ -60,6 +39,20 @@ const DashboardPage = () => {
       maximumFractionDigits: 0,
     }).format(amount);
   };
+
+  // Fetch recent transactions
+  useEffect(() => {
+    const fetchRecentTransactions = async () => {
+      try {
+        const response = await axios.get("http://localhost:8000/api/buses/bookings/users");
+        console.log("Transactions data:", response.data);
+        setRecentTransactions(response.data);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
+      }
+    };
+    fetchRecentTransactions();
+  }, []);
 
   useEffect(() => {
     const fetchTotalRevenue = async () => {
@@ -246,92 +239,104 @@ const DashboardPage = () => {
             <p className="card-title">Recent Transactions</p>
           </div>
           <div className="card-body h-[300px] overflow-auto p-0">
-            {recentSalesData.map((sale) => (
-              <div key={sale.id} className="flex items-center justify-between py-2 pr-2 gap-x-4">
-                <div className="flex items-center gap-x-4">
-                  <img
-                    src={sale.image}
-                    alt={sale.name}
-                    className="flex-shrink-0 object-cover rounded-full size-10"
-                  />
-                  <div className="flex flex-col gap-y-2">
-                    <p className="font-medium text-slate-900 dark:text-slate-50">{sale.name}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">{sale.email}</p>
+            {recentTransactions.length > 0 ? (
+              recentTransactions.map((transaction, index) => (
+                <div key={transaction._id || index} className="flex items-center justify-between py-2 pr-2 gap-x-4">
+                  <div className="flex items-center gap-x-4">
+                    <div className="flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 size-10">
+                      <span className="font-medium text-slate-700 dark:text-slate-300">
+                        {(transaction.name?.charAt(0) || 'U').toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-y-2">
+                      <p className="font-medium text-slate-900 dark:text-slate-50">
+                        {transaction.name || "Unknown User"}
+                      </p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {transaction.email || "No email provided"}
+                      </p>
+                    </div>
                   </div>
+                  <p className="font-medium text-slate-900 dark:text-slate-50">
+                    {formatCurrency(transaction.totalCost)}
+                  </p>
                 </div>
-                <p className="font-medium text-slate-900 dark:text-slate-50">
-                  {formatCurrency(sale.total)}
-                </p>
+              ))
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-slate-500">No recent transactions</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
 
       {/* Top Buses Table */}
       <div className="card">
-          <div className="card-header">
-            <p className="card-title">Top busses</p>
-          </div>
-          <div className="p-0 card-body">
-            <div className="relative h-[500px] w-full flex-shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
-              <table className="table">
-                <thead className="table-header">
-                  <tr className="table-row">
-                    <th className="table-head">#</th>
-                    <th className="table-head">Busses</th>
-                    <th className="table-head">Price</th>
-                    <th className="table-head">Status</th>
-                    <th className="table-head">Rating</th>
-                    <th className="table-head">Actions</th>
+        <div className="card-header">
+          <p className="card-title">Top Buses</p>
+        </div>
+        <div className="p-0 card-body">
+          <div className="relative h-[500px] w-full flex-shrink-0 overflow-auto rounded-none [scrollbar-width:_thin]">
+            <table className="table">
+              <thead className="table-header">
+                <tr className="table-row">
+                  <th className="table-head">#</th>
+                  <th className="table-head">Buses</th>
+                  <th className="table-head">Price</th>
+                  <th className="table-head">Status</th>
+                  <th className="table-head">Rating</th>
+                  <th className="table-head">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="table-body">
+                {topProducts.map((product) => (
+                  <tr key={product.number} className="table-row">
+                    <td className="table-cell">{product.number}</td>
+                    <td className="table-cell">
+                      <div className="flex w-max gap-x-4">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="object-cover rounded-lg size-14"
+                        />
+                        <div className="flex flex-col">
+                          <p>{product.name}</p>
+                          <p className="font-normal text-slate-600 dark:text-slate-400">
+                            {product.description}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="table-cell">${product.price}</td>
+                    <td className="table-cell">{product.status}</td>
+                    <td className="table-cell">
+                      <div className="flex items-center gap-x-2">
+                        <Star size={18} className="fill-yellow-600 stroke-yellow-600" />
+                        {product.rating}
+                      </div>
+                    </td>
+                    <td className="table-cell">
+                      <div className="flex items-center gap-x-4">
+                        <button className="text-red-500 dark:text-red-600">
+                          <PencilLine size={20} />
+                        </button>
+                        <button className="text-red-500">
+                          <Trash size={20} />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="table-body">
-                  {topProducts.map((product) => (
-                    <tr key={product.number} className="table-row">
-                      <td className="table-cell">{product.number}</td>
-                      <td className="table-cell">
-                        <div className="flex w-max gap-x-4">
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="object-cover rounded-lg size-14"
-                          />
-                          <div className="flex flex-col">
-                            <p>{product.name}</p>
-                            <p className="font-normal text-slate-600 dark:text-slate-400">{product.description}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="table-cell">${product.price}</td>
-                      <td className="table-cell">{product.status}</td>
-                      <td className="table-cell">
-                        <div className="flex items-center gap-x-2">
-                          <Star size={18} className="fill-yellow-600 stroke-yellow-600" />
-                          {product.rating}
-                        </div>
-                      </td>
-                      <td className="table-cell">
-                        <div className="flex items-center gap-x-4">
-                          <button className="text-red-500 dark:text-red-600">
-                            <PencilLine size={20} />
-                          </button>
-                          <button className="text-red-500">
-                            <Trash size={20} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
 
       <Footer />
     </div>
   );
 };
 
-export default DashboardPage;
+export default DashboardPage;

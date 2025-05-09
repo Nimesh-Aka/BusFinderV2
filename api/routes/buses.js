@@ -13,7 +13,8 @@ import {
   updateBus,
   getBookingBySessionId,
   getTotalCostData,
-  getAllBusesAdmin
+  getAllBusesAdmin,
+  getBookingUsers
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -59,5 +60,8 @@ router.get("/totalcost", getTotalCostData);
 
 //Admin
 router.get("/allBuses", getAllBusesAdmin);
+
+// Get booking records with user details (sorted by recent payments)
+router.get("/bookings/users", getBookingUsers);
 
 export default router;
