@@ -10,7 +10,7 @@ import {
   getBusCollection,
   getBus,
   payment,
-  updateBus
+  updateBus,
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
