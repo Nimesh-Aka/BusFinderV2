@@ -500,6 +500,7 @@ export const confirmBooking = async (req, res, next) => {
   }
 };
 
+// Get Booking by Session ID
 export const getBookingBySessionId = async (req, res, next) => {
   try {
     const { session_id } = req.params;
@@ -562,3 +563,4 @@ export const getAllBusesAdmin = async (req, res, next) => {
     next(err);
   }
 }
+

@@ -1,3 +1,20 @@
+
+  import express from "express";
+  import {
+    allStationsNames,
+    confirmBooking,
+    countByFirstStation,
+    createBus,
+    deleteBus,
+    filterBuses,
+    getAllBuses,
+    getBusCollection,
+    getBus,
+    payment,
+    updateBus,
+    getBookingBySessionId
+  } from "../controllers/bus.js";
+
 import express from "express";
 import {
   allStationsNames,
@@ -16,10 +33,17 @@ import {
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
-const router = express.Router();
 
-//create
-router.post("/", createBus); //removed verifyAdmin from this line
+  import { verifyAdmin } from "../utils/verifyToken.js";
+
+  const router = express.Router();
+
+
+  //create
+  router.post("/", createBus); //removed verifyAdmin from this line
+
+  //update bus
+  router.put("/:id", verifyAdmin, updateBus);
 
 //update bus
 router.put("/:id", updateBus);
@@ -27,31 +51,39 @@ router.put("/:id", updateBus);
 //delete bus
 router.delete("/:id", deleteBus);
 
-//get bus
-router.get("/find/:id", getBus);
 
-//get all buses
-router.get("/", getAllBuses);
+  //delete bus
+  router.delete("/:id", verifyAdmin, deleteBus);
 
-//get all bus collection
-router.get("/all", getBusCollection)
+  //get bus
+  router.get("/find/:id", getBus);
 
-//get all stations for searching
-router.get("/stationsList", allStationsNames)
+  //get all buses
+  router.get("/", getAllBuses);
 
-//get sorted buses
-router.post("/filter", filterBuses);
+  //get all bus collection
+  router.get("/all", getBusCollection)
 
-router.get("/countByFirstStation", countByFirstStation);
+  //get all stations for searching
+  router.get("/stationsList", allStationsNames)
 
-router.post("/create-checkout-session", payment)
+  //get sorted buses
+  router.post("/filter", filterBuses);
 
-router.post("/confirmbooking", confirmBooking)
+  router.get("/countByFirstStation", countByFirstStation);
 
-router.get("/booking/:session_id", getBookingBySessionId);
+  router.post("/create-checkout-session", payment)
+
+  router.post("/confirmbooking", confirmBooking)
+
+
+  router.get("/booking/:session_id", getBookingBySessionId);
+
+  export default router;
 
 //Adimin
 router.get("/allBuses", getAllBusesAdmin)
 
 
 export default router;
+
