@@ -20,12 +20,6 @@ const SearchResult = ({item, from, to}) => {
   const seatCount = item.seats.length;
   const availableSeats = item.seats.filter(seat => seat.availability === "available").length;
   
-  /*console.log("matchingCityFrom", matchingCityFrom)
-  console.log("matchingCityTo", matchingCityTo)
-  console.log("item.busName",item.busName)
-  console.log("item.busDepartureDate",item.busDepartureDate)
-  console.log("matchingCityFrom.cityName",matchingCityFrom.cityName)
-  console.log("matchingCityTo.cityName",matchingCityTo.cityName)*/
 
   return (
     <div className='w-full col-span-3 space-y-10 pt-11'>

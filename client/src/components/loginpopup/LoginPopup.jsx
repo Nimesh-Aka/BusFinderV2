@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "./LoginPopup.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -27,6 +27,7 @@ const LoginPopup = ({ setShowLogin }) => {
   });
 
   const navigate = useNavigate();
+  const location = useLocation(); // Get current location
   const { user, loading, error, dispatch } = useContext(AuthContext);
 
   // Handle input changes
@@ -206,10 +207,11 @@ const LoginPopup = ({ setShowLogin }) => {
 
         toast.success("Login successful!");
 
-        // Add a small delay before redirecting
+        // Add a small delay before closing the popup
+        // but don't navigate away from current page
         setTimeout(() => {
           setShowLogin(false);
-          navigate("/");
+          // No navigation - stay on current page
         }, 1000); // 1-second delay
       } catch (err) {
         dispatch({ type: "LOGIN_FAILURE", payload: err.response?.data });
