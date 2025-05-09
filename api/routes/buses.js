@@ -43,13 +43,13 @@ router.get("/stationsList", allStationsNames);
 //get sorted buses
 router.post("/filter", filterBuses);
 
-router.get("/countByFirstStation", countByFirstStation);
+
 router.get("/countByFirstStation", countByFirstStation);
 
-router.post("/create-checkout-session", payment);
+
 router.post("/create-checkout-session", payment);
 
-router.post("/confirmbooking", confirmBooking);
+
 router.post("/confirmbooking", confirmBooking);
 
 router.get("/booking/:session_id", getBookingBySessionId);
