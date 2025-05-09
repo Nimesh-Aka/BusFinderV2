@@ -43,7 +43,7 @@ router.get("/stationsList", allStationsNames);
 //get sorted buses
 router.post("/filter", filterBuses);
 
-
+//get bus count by first station
 router.get("/countByFirstStation", countByFirstStation);
 
 
