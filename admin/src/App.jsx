@@ -61,6 +61,7 @@ function App() {
     ]);
 
     // Comment the committed out code
+    //Check the admin directory is in same repo
 
     return (
         <ThemeProvider storageKey="theme">
