@@ -60,6 +60,8 @@ function App() {
         },
     ]);
 
+    // Comment the committed out code
+
     return (
         <ThemeProvider storageKey="theme">
             <RouterProvider router={router} />
