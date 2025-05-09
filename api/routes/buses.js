@@ -14,7 +14,8 @@ import {
   getBookingBySessionId,
   getTotalCostData,
   getAllBusesAdmin,
-  getBookingUsers
+  getBookingUsers,
+  getDailyRevenue
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -63,5 +64,10 @@ router.get("/allBuses", getAllBusesAdmin);
 
 // Get booking records with user details (sorted by recent payments)
 router.get("/bookings/users", getBookingUsers);
+
+// Get daily revenue reports
+router.get("/reports/daily", getDailyRevenue);
+
+
 
 export default router;
