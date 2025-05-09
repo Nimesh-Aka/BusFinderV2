@@ -11,7 +11,8 @@ import {
   getBus,
   payment,
   updateBus,
-  getBookingBySessionId
+  getBookingBySessionId,
+  getTotalCostData
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -48,5 +49,11 @@ router.post("/create-checkout-session", payment)
 router.post("/confirmbooking", confirmBooking)
 
 router.get("/booking/:session_id", getBookingBySessionId);
+
+// Add this route to your existing routes
+router.get("/totalcost", getTotalCostData);
+
+
+
 
 export default router;
