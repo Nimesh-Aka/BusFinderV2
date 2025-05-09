@@ -87,7 +87,7 @@ const Busses = () => {
               : "bg-red-100 border-l-4 border-red-500 text-red-900"
           }`}
         >
-          <h2 className="text-xl font-semibold mb-2">Select Date</h2>
+          <h2 className="mb-2 text-xl font-semibold">Select Date</h2>
           <input
             type="date"
             value={selectedDate}
@@ -95,7 +95,7 @@ const Busses = () => {
               setSelectedDate(e.target.value);
               setViewMode("date");
             }}
-            className="w-full p-2 border rounded bg-transparent"
+            className="w-full p-2 bg-transparent border rounded"
           />
         </div>
       </div>
