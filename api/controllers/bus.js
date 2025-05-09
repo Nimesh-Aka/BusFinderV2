@@ -641,3 +641,51 @@ export const getBookingUsers = async (req, res, next) => {
   }
 };
 
+
+
+
+
+// In controllers/bus.js get all totalcost data of date by date
+export const getDailyRevenue = async (req, res, next) => {
+  try {
+    const { startDate, endDate } = req.query;
+    
+    const matchStage = {};
+    if (startDate && endDate) {
+      matchStage.createdAt = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    }
+
+    const dailyData = await Booking.aggregate([
+      { $match: matchStage },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          totalRevenue: { $sum: "$totalCost" },
+          bookingsCount: { $sum: 1 },
+          individualCosts: { $push: "$totalCost" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id",
+          totalRevenue: 1,
+          averageRevenue: { $divide: ["$totalRevenue", "$bookingsCount"] },
+          bookingsCount: 1,
+          individualCosts: 1
+        }
+      },
+      { $sort: { date: -1 } }
+    ]);
+
+    res.status(200).json(dailyData);
+  } catch (err) {
+    next(err);
+  }
+};
+

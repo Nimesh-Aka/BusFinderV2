@@ -22,6 +22,12 @@ import {
   Users,
 } from "lucide-react";
 
+const DAILY_REVENUE_URL = "http://localhost:8000/api/buses/reports/daily";
+const TRANSACTIONS_URL = "http://localhost:8000/api/buses/bookings/users";
+const TOTAL_REVENUE_URL = "http://localhost:8000/api/buses/totalcost";
+const ALL_BUSES_URL = "http://localhost:8000/api/buses/all";
+const USERS_URL = "http://localhost:8000/api/users";
+
 const DashboardPage = () => {
   const [buses, setBuses] = useState([]);
   const [users, setUsers] = useState([]);
@@ -31,6 +37,7 @@ const DashboardPage = () => {
   const [error, setError] = useState(null);
   const { theme } = useTheme();
   const [recentTransactions, setRecentTransactions] = useState([]);
+  const [dailyRevenue, setDailyRevenue] = useState([]);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-LK", {
@@ -40,12 +47,35 @@ const DashboardPage = () => {
     }).format(amount);
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  // Fetch daily revenue data
+  useEffect(() => {
+    const fetchDailyRevenue = async () => {
+      try {
+        const response = await axios.get(DAILY_REVENUE_URL);
+        const sortedData = response.data.sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        );
+        setDailyRevenue(sortedData);
+      } catch (error) {
+        console.error("Error fetching daily revenue:", error);
+      }
+    };
+    fetchDailyRevenue();
+  }, []);
+
   // Fetch recent transactions
   useEffect(() => {
     const fetchRecentTransactions = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/buses/bookings/users");
-        console.log("Transactions data:", response.data);
+        const response = await axios.get(TRANSACTIONS_URL);
         setRecentTransactions(response.data);
       } catch (error) {
         console.error("Error fetching transactions:", error);
@@ -54,10 +84,11 @@ const DashboardPage = () => {
     fetchRecentTransactions();
   }, []);
 
+  // Fetch total revenue
   useEffect(() => {
     const fetchTotalRevenue = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/buses/totalcost");
+        const response = await axios.get(TOTAL_REVENUE_URL);
         setTotalRevenue(response.data.totalRevenue);
       } catch (error) {
         console.error("Error fetching total revenue:", error);
@@ -66,11 +97,12 @@ const DashboardPage = () => {
     fetchTotalRevenue();
   }, []);
 
+  // Fetch buses data
   useEffect(() => {
     const fetchBuses = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8000/api/buses/all");
+        const response = await axios.get(ALL_BUSES_URL);
         const allBuses = response.data;
         setBuses(allBuses);
 
@@ -81,7 +113,6 @@ const DashboardPage = () => {
             .split("T")[0];
           return departureDate === todayDate;
         });
-
         setTodayBuses(filteredToday.length);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch buses");
@@ -92,11 +123,12 @@ const DashboardPage = () => {
     fetchBuses();
   }, []);
 
+  // Fetch users data
   useEffect(() => {
     const fetchUsers = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:8000/api/users");
+        const response = await axios.get(USERS_URL);
         setUsers(response.data);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch users");
@@ -111,8 +143,8 @@ const DashboardPage = () => {
     <div className="flex flex-col gap-y-4">
       <h1 className="title">Dashboard</h1>
 
+      {/* Cards Section */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {/* Total Buses Card */}
         <div className="card">
           <div className="card-header">
             <div className="p-2 text-red-500 transition-colors rounded-lg w-fit bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
@@ -131,7 +163,6 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Total Revenue Card */}
         <div className="card">
           <div className="card-header">
             <div className="p-2 text-red-500 transition-colors rounded-lg bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
@@ -150,7 +181,6 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Total Users Card */}
         <div className="card">
           <div className="card-header">
             <div className="p-2 text-red-500 transition-colors rounded-lg bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
@@ -169,7 +199,6 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Today's Buses Card */}
         <div className="card">
           <div className="card-header">
             <div className="p-2 text-red-500 transition-colors rounded-lg bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
@@ -198,7 +227,7 @@ const DashboardPage = () => {
           <div className="p-0 card-body">
             <ResponsiveContainer width="100%" height={300}>
               <AreaChart
-                data={overviewData}
+                data={dailyRevenue}
                 margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
               >
                 <defs>
@@ -207,15 +236,20 @@ const DashboardPage = () => {
                     <stop offset="95%" stopColor="#EB2528" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <Tooltip cursor={false} formatter={(value) => formatCurrency(value)} />
+                <Tooltip
+                  cursor={false}
+                  formatter={(value) => formatCurrency(value)}
+                  labelFormatter={(label) => formatDate(label)}
+                />
                 <XAxis
-                  dataKey="name"
+                  dataKey="date"
                   strokeWidth={0}
                   stroke={theme === "light" ? "#694748" : "#B89495"}
                   tickMargin={6}
+                  tickFormatter={formatDate}
                 />
                 <YAxis
-                  dataKey="total"
+                  dataKey="totalRevenue"
                   strokeWidth={0}
                   stroke={theme === "light" ? "#694748" : "#B89495"}
                   tickFormatter={(value) => formatCurrency(value)}
@@ -223,7 +257,7 @@ const DashboardPage = () => {
                 />
                 <Area
                   type="monotone"
-                  dataKey="total"
+                  dataKey="totalRevenue"
                   stroke="#2563eb"
                   fillOpacity={1}
                   fill="url(#colorTotal)"
@@ -233,19 +267,21 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        {/* Recent Transactions */}
         <div className="col-span-1 card md:col-span-2 lg:col-span-3">
           <div className="card-header">
             <p className="card-title">Recent Transactions</p>
           </div>
           <div className="card-body h-[300px] overflow-auto p-0">
             {recentTransactions.length > 0 ? (
-              recentTransactions.map((transaction, index) => (
-                <div key={transaction._id || index} className="flex items-center justify-between py-2 pr-2 gap-x-4">
+              recentTransactions.map((transaction) => (
+                <div
+                  key={transaction._id}
+                  className="flex items-center justify-between py-2 pr-2 gap-x-4"
+                >
                   <div className="flex items-center gap-x-4">
                     <div className="flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 size-10">
                       <span className="font-medium text-slate-700 dark:text-slate-300">
-                        {(transaction.name?.charAt(0) || 'U').toUpperCase()}
+                        {(transaction.name?.charAt(0) || "U").toUpperCase()}
                       </span>
                     </div>
                     <div className="flex flex-col gap-y-2">
