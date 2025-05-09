@@ -1,20 +1,3 @@
-
-  import express from "express";
-  import {
-    allStationsNames,
-    confirmBooking,
-    countByFirstStation,
-    createBus,
-    deleteBus,
-    filterBuses,
-    getAllBuses,
-    getBusCollection,
-    getBus,
-    payment,
-    updateBus,
-    getBookingBySessionId
-  } from "../controllers/bus.js";
-
 import express from "express";
 import {
   allStationsNames,
@@ -29,61 +12,45 @@ import {
   payment,
   updateBus,
   getBookingBySessionId,
-  getAllBusesAdmin
+  getAllBusesAdmin // Added the new function
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
+const router = express.Router();
 
-  import { verifyAdmin } from "../utils/verifyToken.js";
+// Create
+router.post("/", verifyAdmin, createBus);
 
-  const router = express.Router();
+// Update bus
+router.put("/:id", verifyAdmin, updateBus);
 
+// Delete bus
+router.delete("/:id", verifyAdmin, deleteBus);
 
-  //create
-  router.post("/", createBus); //removed verifyAdmin from this line
+// Get bus
+router.get("/find/:id", getBus);
 
-  //update bus
-  router.put("/:id", verifyAdmin, updateBus);
+// Get all buses (public)
+router.get("/", getAllBuses);
 
-//update bus
-router.put("/:id", updateBus);
+// Get all buses (admin)
+router.get("/allBuses", verifyAdmin, getAllBusesAdmin);
 
-//delete bus
-router.delete("/:id", deleteBus);
+// Get all bus collection
+router.get("/all", getBusCollection);
 
+// Get all stations for searching
+router.get("/stationsList", allStationsNames);
 
-  //delete bus
-  router.delete("/:id", verifyAdmin, deleteBus);
+// Get sorted buses
+router.post("/filter", filterBuses);
 
-  //get bus
-  router.get("/find/:id", getBus);
+router.get("/countByFirstStation", countByFirstStation);
 
-  //get all buses
-  router.get("/", getAllBuses);
+router.post("/create-checkout-session", payment);
 
-  //get all bus collection
-  router.get("/all", getBusCollection)
+router.post("/confirmbooking", confirmBooking);
 
-  //get all stations for searching
-  router.get("/stationsList", allStationsNames)
-
-  //get sorted buses
-  router.post("/filter", filterBuses);
-
-  router.get("/countByFirstStation", countByFirstStation);
-
-  router.post("/create-checkout-session", payment)
-
-  router.post("/confirmbooking", confirmBooking)
-
-
-  router.get("/booking/:session_id", getBookingBySessionId);
-
-  export default router;
-
-//Adimin
-router.get("/allBuses", getAllBusesAdmin)
-
+router.get("/booking/:session_id", getBookingBySessionId);
 
 export default router;
-
