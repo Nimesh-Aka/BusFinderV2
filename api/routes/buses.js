@@ -11,7 +11,8 @@ import {
   getBus,
   payment,
   updateBus,
-  getBookingBySessionId
+  getBookingBySessionId,
+  getAllBusesAdmin
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -21,10 +22,10 @@ const router = express.Router();
 router.post("/", createBus); //removed verifyAdmin from this line
 
 //update bus
-router.put("/:id", verifyAdmin, updateBus);
+router.put("/:id", updateBus);
 
 //delete bus
-router.delete("/:id", verifyAdmin, deleteBus);
+router.delete("/:id", deleteBus);
 
 //get bus
 router.get("/find/:id", getBus);
@@ -48,5 +49,9 @@ router.post("/create-checkout-session", payment)
 router.post("/confirmbooking", confirmBooking)
 
 router.get("/booking/:session_id", getBookingBySessionId);
+
+//Adimin
+router.get("/allBuses", getAllBusesAdmin)
+
 
 export default router;

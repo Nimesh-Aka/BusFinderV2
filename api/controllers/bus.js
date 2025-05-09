@@ -551,3 +551,14 @@ export const getBookingBySessionId = async (req, res, next) => {
     next(err);
   }
 };
+
+//ADMIN PANNEL CONTROLLERS
+export const getAllBusesAdmin = async (req, res, next) => {
+  try {
+    // Find all buses and sort by createdAt field in descending order (newest first)
+    const buses = await Bus.find().sort({ createdAt: -1 });
+    res.status(200).json(buses);
+  } catch (err) {
+    next(err);
+  }
+}
