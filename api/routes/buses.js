@@ -12,8 +12,9 @@ import {
   payment,
   updateBus,
   getBookingBySessionId,
-  getAllBusesAdmin
+  getAllBusesAdmin // Added the new function
 } from "../controllers/bus.js";
+import { verifyAdmin } from "../utils/verifyToken.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
 const router = express.Router();
@@ -43,9 +44,12 @@ router.get("/stationsList", allStationsNames);
 router.post("/filter", filterBuses);
 
 router.get("/countByFirstStation", countByFirstStation);
+router.get("/countByFirstStation", countByFirstStation);
 
 router.post("/create-checkout-session", payment);
+router.post("/create-checkout-session", payment);
 
+router.post("/confirmbooking", confirmBooking);
 router.post("/confirmbooking", confirmBooking);
 
 router.get("/booking/:session_id", getBookingBySessionId);
