@@ -15,7 +15,6 @@ import {
   getAllBusesAdmin // Added the new function
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
-import { verifyAdmin } from "../utils/verifyToken.js";
 
 const router = express.Router();
 
