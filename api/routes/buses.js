@@ -10,7 +10,8 @@ import {
   getBusCollection,
   getBus,
   payment,
-  updateBus
+  updateBus,
+  getBookingBySessionId
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -45,5 +46,7 @@ router.get("/countByFirstStation", countByFirstStation);
 router.post("/create-checkout-session", payment)
 
 router.post("/confirmbooking", confirmBooking)
+
+router.get("/booking/:session_id", getBookingBySessionId);
 
 export default router;

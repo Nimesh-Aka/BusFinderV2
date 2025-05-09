@@ -25,13 +25,16 @@ const bookingSchema = new mongoose.Schema({
   },
   paymentStatus: {
     type: String,
-    enum: ["pending", "paid", "failed"],
+    enum: ["pending", "confirmed", "refunded", "cancelled"],
     default: "pending",
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
-});
+  stripeSessionId: {
+    type: String
+  }
+},{ timestamps: true });
 
 export default mongoose.model("Booking", bookingSchema);
