@@ -553,6 +553,49 @@ export const getBookingBySessionId = async (req, res, next) => {
   }
 };
 
+
+// Get all total costs (with optional filtering by payment status)
+export const getTotalCostData = async (req, res, next) => {
+  try {
+    // Extract query parameters for filtering
+    const { paymentStatus } = req.query;
+
+    // Build the match criteria
+    const matchCriteria = {};
+    if (paymentStatus) {
+      matchCriteria.paymentStatus = paymentStatus;
+    }
+
+    // Get total cost data with filtering
+    const totalCostData = await Booking.aggregate([
+      { $match: matchCriteria },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalCost" }, // Sum of all totalCost
+          averageCost: { $avg: "$totalCost" },  // Average ticket price
+          bookingsCount: { $sum: 1 },           // Total number of bookings
+          individualCosts: { $push: "$totalCost" } // Array of all individual costs
+        }
+      }
+    ]);
+
+    // If no data found, return default structure
+    if (totalCostData.length === 0) {
+      return res.status(200).json({
+        totalRevenue: 0,
+        averageCost: 0,
+        bookingsCount: 0,
+        individualCosts: []
+      });
+    }
+
+    // Return aggregated data
+    res.status(200).json(totalCostData[0]);
+  } catch (err) {
+    next(err);
+  }
+}
 //ADMIN PANNEL CONTROLLERS
 export const getAllBusesAdmin = async (req, res, next) => {
   try {

@@ -12,7 +12,8 @@ import {
   payment,
   updateBus,
   getBookingBySessionId,
-  getAllBusesAdmin // Added the new function
+  getTotalCostData,
+  getAllBusesAdmin
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -53,8 +54,10 @@ router.post("/confirmbooking", confirmBooking);
 
 router.get("/booking/:session_id", getBookingBySessionId);
 
+// Add this route to your existing routes
+router.get("/totalcost", getTotalCostData);
+
 //Admin
 router.get("/allBuses", getAllBusesAdmin);
 
-// Only export once at the end
 export default router;
