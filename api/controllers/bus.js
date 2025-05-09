@@ -500,6 +500,7 @@ export const confirmBooking = async (req, res, next) => {
   }
 };
 
+// Get Booking by Session ID
 export const getBookingBySessionId = async (req, res, next) => {
   try {
     const { session_id } = req.params;
@@ -553,9 +554,6 @@ export const getBookingBySessionId = async (req, res, next) => {
 };
 
 
-
-
-
 // Get all total costs (with optional filtering by payment status)
 export const getTotalCostData = async (req, res, next) => {
   try {
@@ -597,4 +595,15 @@ export const getTotalCostData = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
+}
+//ADMIN PANNEL CONTROLLERS
+export const getAllBusesAdmin = async (req, res, next) => {
+  try {
+    // Find all buses and sort by createdAt field in descending order (newest first)
+    const buses = await Bus.find().sort({ createdAt: -1 });
+    res.status(200).json(buses);
+  } catch (err) {
+    next(err);
+  }
+}
+

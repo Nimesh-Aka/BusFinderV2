@@ -22,6 +22,22 @@ import {
   Users,
 } from "lucide-react";
 
+const URL = "http://localhost:8000/api/buses/bookings/users";
+
+const fetchHandler = async () => {
+  return await axios.get(URL)
+  .then((response) => {
+    console.log("Fetched Users:", response); // Debug log
+    console.log("response Users:", response.data); // Debug log
+    console.log("frist Users:", response.data[0]); // Debug log
+    console.log("frist User name:", response.data[0].userName); // Debug log
+    return response.data;
+  })
+  .catch((error) => {
+    console.error("Error fetching users:", error);
+  });
+};
+
 const DashboardPage = () => {
   const [buses, setBuses] = useState([]);
   const [users, setUsers] = useState([]);
@@ -30,6 +46,12 @@ const DashboardPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { theme } = useTheme();
+  const [recentUsers, setRecentUsers] = useState([]);
+
+  
+  useEffect(() => {
+    fetchHandler().then((data) => setRecentUsers(data.recentUsers));
+  }, []);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-LK", {
@@ -312,4 +334,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default DashboardPage;

@@ -58,7 +58,7 @@
                     path: "/add-bus",
                 },
                 {
-                    label: "Update Bus",   //change
+                    label: "Bus Management",   //change
                     icon: ShoppingBag,
                     path: "/update-bus",
                 },
