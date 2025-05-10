@@ -6,6 +6,7 @@ import authRouter from "./routes/auth.js";
 import busRouter from "./routes/buses.js";
 import userRouter from "./routes/users.js";
 import seatsRouter from "./routes/seats.js";
+import ticketRouter from "./routes/tickets.js";
 import cookieParser from "cookie-parser";
 
 
@@ -47,6 +48,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/buses", busRouter);
 app.use("/api/users", userRouter);
 app.use("/api/seats", seatsRouter);
+app.use("/api/tickets", ticketRouter);
 
 //error handling middleware
 app.use((err, req, res, next) => {
