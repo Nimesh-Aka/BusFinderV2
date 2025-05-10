@@ -2,6 +2,7 @@ import express from "express";
 import {
   allStationsNames,
   confirmBooking,
+  sessioncreate,
   countByFirstStation,
   createBus,
   deleteBus,
@@ -54,6 +55,8 @@ router.post("/create-checkout-session", payment);
 
 
 router.post("/confirmbooking", confirmBooking);
+
+router.post("/sessioncreate", sessioncreate);
 
 router.get("/booking/:session_id", getBookingBySessionId);
 

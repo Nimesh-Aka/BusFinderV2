@@ -367,6 +367,75 @@ export const filterBuses = async (req, res, next) => {
   }
 };
 
+function generateRandomString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
+
+// Payment Function
+export const sessioncreate= async (req, res, next) => {
+  try {
+    
+    const {
+      userId,
+      totalCost,
+      routeTo,
+      busId,
+      selectedSeats,
+    } = req.body;
+
+    // Convert busId to ObjectId
+    const busObjectId = new mongoose.Types.ObjectId(busId);
+
+    // Convert totalCost to cents
+    const amountInCents = Math.round(Number(totalCost) * 100);
+
+    // Log debug info
+    console.log("Selected Seats:", selectedSeats);
+    console.log("Bus ID:", busId);
+
+    const sessionid = generateRandomString(10);
+
+    // In your payment function, modify the newBooking creation:
+    const newBooking = new Booking({
+      userId,
+      busId: busObjectId,
+      selectedSeats,
+      totalCost,
+      routeTo,
+      paymentStatus: "pending",
+      stripeSessionId: generateRandomString(10), // Add this line to store session ID
+    });
+
+    await newBooking.save();
+    console.log("Booking saved:", newBooking);
+
+    // Check if bus exists
+    const bus = await Bus.findById(busObjectId);
+    if (!bus) {
+      console.error("Bus not found.");
+      return res.status(404).json({ error: "Bus not found" });
+    }
+    console.log("Bus Found:", bus);
+
+    // Update seat availability
+    const updateResult = await Bus.updateMany(
+      { _id: busObjectId, "seats.seatNumber": { $in: selectedSeats } },
+      { $set: { "seats.$.availability": "booked" } }
+    );
+
+    console.log("Seats update result:", updateResult);
+
+    res.status(200).json(sessionid);
+  } catch (err) {
+    console.error("Error in payment function:", err);
+    next(err);
+  }
+};
 // Payment Function
 export const payment = async (req, res, next) => {
   try {
