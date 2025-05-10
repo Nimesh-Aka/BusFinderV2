@@ -672,7 +672,7 @@ export const getAllBookings = async (req, res, next) => {
       })
       .populate({
         path: "userId",
-        select: "userName email name"
+        select: "email username userName name"
       })
       .sort({ createdAt: -1 }); // Most recent first
       
