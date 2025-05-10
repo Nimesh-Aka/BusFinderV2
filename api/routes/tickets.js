@@ -1,5 +1,5 @@
 import express from "express";
-import{addTicket,deleteTicket,getTicketsByUserId} from "../controllers/ticket";
+import{addTicket,deleteTicket,getTicketsByUserId} from "../controllers/ticket.js";
 
 const router = express.Router();
 

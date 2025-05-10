@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const TicketSchema = new mongoose.Schema({
   userId: String,
@@ -24,4 +24,4 @@ TicketSchema.statics.getTicketsByUserId = function(userId) {
   return this.find({ userId });
 };
 
-module.exports = mongoose.model('Ticket', TicketSchema);
+export default mongoose.model("Ticket", TicketSchema);
