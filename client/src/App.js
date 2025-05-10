@@ -33,6 +33,7 @@ function App() {
           <Route path="/bus-tickets/checkout" element={<Checkout />} />
           <Route path="/bus-tickets/payment" element={<Invoice/>} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/bus-tickets" element={<div className="my-10 pt-10"><Ticket /></div>} />
         </Routes>
         <Footer />
       </AuthContextProvider>

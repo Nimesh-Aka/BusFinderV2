@@ -1,15 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import { GiSteeringWheel } from 'react-icons/gi';
-import busSeatData from '../../../../../constants/busseat/BusSeatData';
-import { MdOutlineChair } from 'react-icons/md';
-import { RiMoneyRupeeCircleLine } from "react-icons/ri";
-import { Link } from 'react-router-dom';
-import useFetch from '../../../../../Hooks/useFetch';
-
-
+import React, { useState, useEffect } from "react";
+import useFetch from "../../../../../Hooks/useFetch";
+import SeatLayout from "./SeatLayout";
+import SeatSelection from "./SeatSelection";
 
 const BusSeat = ({ id, routeTo }) => {
-
   const { data, loading, error } = useFetch(`/buses/find/${id}`);
 
   //Track seat selection
@@ -33,52 +27,10 @@ const BusSeat = ({ id, routeTo }) => {
   if (!data || !data.busCitiesAndTimes) {
     return <p>No data available</p>;
   }
-  console.log("BusSeat data: ", data); //object
-  console.log("BusSeat routeTo: ", routeTo); //Matara
 
-  const matchingCity = data.busCitiesAndTimes.find(city => city.cityName === routeTo);
-  console.log("To", matchingCity.cityName); //Galle
-
-
-
-  {/*
-    //Toggle seat selection
-    const handleSeatClick = (seatId) => {
-        //If the seat is already booked, ignore the click or disable it 
-        const selectedSeat = data.seats.find((seat) => seat._id === seatId);
-        if (selectedSeat.availability === 'booked') {
-            return; //do nothing
-        };
-
-        //If the seat is available, select it
-        setSelectedSeats((prevSelectedSeats) => {
-            //check if the seat is already selected
-            if (prevSelectedSeats.includes(seatId)) {
-                return prevSelectedSeats.filter((seat) => seat !== seatId); // vice versa or deselect
-            } else {
-                // Show the error if more than 10 seats are selected
-                if (prevSelectedSeats.length >= 10) {
-                    setShowError(true);
-                    return prevSelectedSeats; // Do not select the seat more than 10
-                } else {
-                    return [...prevSelectedSeats, seatId];
-                }
-            }
-        })
-    };
-
-    
-
-    //function to determine seat class or seat name on status
-    const getSeatName = (seat) => {
-        if (seat.availability === 'booked') {
-            return 'text-primary cursor-not-allowed' // bookes seat unavailable
-        } if (selectedSeats.includes(seat._id)) {
-            return 'text-yellow-600 cursor-pointer' // selected seat
-        }
-        return 'text-neutral-500 cursor-pointer' // available seat
-    };
-  */}
+  const matchingCity = data.busCitiesAndTimes.find(
+    (city) => city.cityName === routeTo
+  );
 
   // Toggle seat selection
   const handleSeatClick = (seatId) => {
@@ -86,7 +38,10 @@ const BusSeat = ({ id, routeTo }) => {
     const selectedSeat = data.seats.find((seat) => seat._id === seatId);
 
     // If the seat is booked or under maintenance, ignore the click
-    if (selectedSeat.availability === 'booked' || selectedSeat.availability === 'maintenance') {
+    if (
+      selectedSeat.availability === "booked" ||
+      selectedSeat.availability === "maintenance"
+    ) {
       return; // Do nothing
     }
 
@@ -109,18 +64,17 @@ const BusSeat = ({ id, routeTo }) => {
 
   // Function to determine seat class or seat name based on status
   const getSeatName = (seat) => {
-    if (seat.availability === 'booked') {
-      return 'text-primary cursor-not-allowed'; // Booked seat - unavailable
+    if (seat.availability === "booked") {
+      return "text-primary cursor-not-allowed"; // Booked seat - unavailable
     }
-    if (seat.availability === 'maintenance') {
-      return 'text-brown-500 cursor-not-allowed'; // Maintenance seat - unavailable
+    if (seat.availability === "maintenance") {
+      return "text-brown-500 cursor-not-allowed"; // Maintenance seat - unavailable
     }
     if (selectedSeats.includes(seat._id)) {
-      return 'text-yellow-600 cursor-pointer'; // Selected seat
+      return "text-yellow-600 cursor-pointer"; // Selected seat
     }
-    return 'text-neutral-500 cursor-pointer'; // Available seat
+    return "text-neutral-500 cursor-pointer"; // Available seat
   };
-
 
   //Calculate the total cost of selected seats
   const totalCost = selectedSeats.reduce((total, seatId) => {
@@ -128,292 +82,83 @@ const BusSeat = ({ id, routeTo }) => {
     return total + (seat ? data.busTicketPrice : 0);
   }, 0);
 
+  // Helper function to calculate travel time
+// Helper function to calculate travel time
+const getTravelTime = (startTime, endTime) => {
+  const [startHours, startMinutes] = startTime.split(":").map(Number);
+  const [endHours, endMinutes] = endTime.split(":").map(Number);
+
+  let hoursDiff = endHours - startHours;
+  let minutesDiff = endMinutes - startMinutes;
+
+  if (minutesDiff < 0) {
+    hoursDiff--;
+    minutesDiff += 60;
+  }
+
+  if (hoursDiff < 0) {
+    hoursDiff += 24; // Assuming it's within the same day or crosses to next day
+  }
+
+  // Format as "X hours Y min"
+  if (hoursDiff === 0) {
+    return `${minutesDiff} min`;
+  } else if (minutesDiff === 0) {
+    return `${hoursDiff} ${hoursDiff === 1 ? 'hour' : 'hours'}`;
+  } else {
+    return `${hoursDiff} ${hoursDiff === 1 ? 'hour' : 'hours'} ${minutesDiff} min`;
+  }
+};
+  // Helper function to count stops between cities
+  const getStopsCount = (citiesAndTimes, fromCity, toCity) => {
+    const fromIndex = citiesAndTimes.findIndex(
+      (city) => city.cityName === fromCity
+    );
+    const toIndex = citiesAndTimes.findIndex(
+      (city) => city.cityName === toCity
+    );
+
+    if (fromIndex === -1 || toIndex === -1 || fromIndex >= toIndex) {
+      return 0;
+    }
+
+    return toIndex - fromIndex - 1; // Subtracting 1 because we don't count the destination as a stop
+  };
+
   return (
-    <div className="grid w-full grid-cols-5 gap-10">
-      {/* Seat Layout */}
-      <div className="flex items-center justify-center w-full col-span-3 p-4 border shadow-sm rounded-xl border-neutral-200">
-        <div className="w-full space-y-7">
-          <p className="text-base font-medium text-center text-neutral-600">
-            Click on available seats to reserve your seat.
-          </p>
-
-          {/* Seat layout */}
-          <div className="w-full flex items-stretch gap-x-1.5">
-            <div className="w-10 h-fit">
-              <GiSteeringWheel className="text-3xl -rotate-90 mt-7 text-primary" />
-            </div>
-
-            {/* Seat rows */}
-            <div className="flex flex-col items-center border-l-2 border-dashed border-neutral-300 pl-7">
-              <div className="flex-1 space-y-5">
-
-                {/* First row */}
-                <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                  {data.seats.slice(0, 9).map((seat) => (
-                    <div
-                      key={seat._id}
-                      className="flex items-center gap-x-0"
-                      onClick={() => handleSeatClick(seat._id)}
-                    >
-                      <h6 className="text-base font-bold text-neutral-600">
-                        {seat.seatNumber}
-                      </h6>
-                      <MdOutlineChair
-                        className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Second row */}
-                <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                  {data.seats.slice(9, 18).map((seat) => (
-                    <div
-                      key={seat._id}
-                      className="flex items-center gap-x-0"
-                      onClick={() => handleSeatClick(seat._id)}
-                    >
-                      <h6 className="text-base font-bold text-neutral-600">
-                        {seat.seatNumber}
-                      </h6>
-                      <MdOutlineChair
-                        className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Third row */}
-                <div className="grid justify-end w-full h-auto grid-cols-10 gap-x-5">
-                  <div className="col-span-9"></div>
-                  {data.seats.slice(18, 19).map((seat) => (
-                    <div
-                      key={seat._id}
-                      className="flex items-center gap-x-0"
-                      onClick={() => handleSeatClick(seat._id)}
-                    >
-                      <h6 className="text-base font-bold text-neutral-600">
-                        {seat.seatNumber}
-                      </h6>
-                      <MdOutlineChair
-                        className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Fourth row */}
-                <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                  {data.seats.slice(19, 28).map((seat) => (
-                    <div
-                      key={seat._id}
-                      className="flex items-center gap-x-0"
-                      onClick={() => handleSeatClick(seat._id)}
-                    >
-                      <h6 className="text-base font-bold text-neutral-600">
-                        {seat.seatNumber}
-                      </h6>
-                      <MdOutlineChair
-                        className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Fifth row */}
-                <div className="grid justify-end w-full h-auto grid-cols-9 gap-x-5">
-                  {data.seats.slice(28, 37).map((seat) => (
-                    <div
-                      key={seat._id}
-                      className="flex items-center gap-x-0"
-                      onClick={() => handleSeatClick(seat._id)}
-                    >
-                      <h6 className="text-base font-bold text-neutral-600">
-                        {seat.seatNumber}
-                      </h6>
-                      <MdOutlineChair
-                        className={`text-3xl -rotate-90 ${getSeatName(seat)}`} // Template literals for dynamic class names
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* reservation info */}
-          <div className="flex items-center justify-center w-full gap-6 pt-5 border-t border-neutral-200">
-            <div className="flex items-center gap-x-2">
-              <MdOutlineChair className="text-xl -rotate-90 text-neutral-500" />
-              <p className="text-sm font-medium text-neutral-500">
-                Available
-              </p>
-            </div>
-
-            <div className="flex items-center gap-x-2">
-              <MdOutlineChair className="text-xl -rotate-90 text-primary" />
-              <p className="text-sm font-medium text-neutral-500">Booked</p>
-            </div>
-
-            <div className="flex items-center gap-x-2">
-              <MdOutlineChair className="text-xl text-brown-600 -rotate-90" />
-              <p className="text-sm font-medium text-neutral-500">Maintenance</p>
-            </div>
-
-            <div className="flex items-center gap-x-2">
-              <MdOutlineChair className="text-xl text-yellow-600 -rotate-90" />
-              <p className="text-sm font-medium text-neutral-500">Selected</p>
-            </div>
-
-
-            {/*<div className="flex items-center gap-x-2">
-              <RiMoneyRupeeCircleLine className="text-xl text-neutral-500" />
-              <p className="text-sm font-medium text-neutral-500">{data.busTicketPrice}</p>
-            </div> */}
-
-            <div className="flex items-center gap-x-2">
-              <p className="text-sm font-medium text-black-500">Rs. {data.busTicketPrice}</p>
-            </div>
-
-
-          </div>
-        </div>
+    <div className="flex flex-col lg:flex-row w-full gap-6">
+      {/* Seat Layout Component - takes full width on mobile, 60% on desktop */}
+      <div className="w-full lg:w-3/5">
+        <SeatLayout 
+          data={data} 
+          selectedSeats={selectedSeats} 
+          handleSeatClick={handleSeatClick} 
+          getSeatName={getSeatName} 
+        />
       </div>
-
-      {/* Seat selection action */}
-      <div className="w-full col-span-2 px-6 py-4 space-y-5 border shadow-sm bg-neutral-50 rounded-xl border-neutral-200">
-        <div className="w-full space-y-2">
-          <div className="flex items-center justify-between w-full">
-            <h1 className="text-lg font-medium text-neutral-600">
-              Your Destination
-            </h1>
-            <Link
-              to={"/bus-tickets"}
-              className="text-sm font-normal text-primary"
-            >
-              Change route
-            </Link>
-          </div>
-
-          <div className="space-y-0.5 w-full">
-            <div className="flex items-center justify-between w-full gap-x-5">
-              <p className="text-sm font-normal text-neutral-400 mb-2">
-                From{" "}
-                <span className="text-base font-semibold text-neutral-700">
-                  {data.busCitiesAndTimes[0].cityName}
-                </span>
-              </p>
-              <p className="text-sm font-normal text-neutral-400">
-                To{" "}
-                <span className="text-base font-semibold text-neutral-700">
-                  {matchingCity.cityName}
-                </span>
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between w-full gap-x-4">
-              <h1 className="text-sm font-normal text-neutral-600">
-                {data.busCitiesAndTimes[0].cityName} <span className="font-medium">{data.busCitiesAndTimes[0].arrivalTime}</span>
-              </h1>
-
-              <div className="flex-1 border border-dashed border-neutral-300" />
-
-              <h1 className="text-sm font-normal text-neutral-600">
-                {matchingCity.cityName} <span className="text-sm font-medium">{matchingCity.arrivalTime}</span>
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full space-y-2">
-          <div className="flex items-center justify-between w-full">
-            <h1 className="text-lg font-medium text-neutral-600">
-              Selected Seats
-            </h1>
-
-            <div className="px-1.5 py-0.5 text-xs font-normal uppercase rounded-lg bg-primary/20 text-neutral-600">
-              Non-refundable
-            </div>
-          </div>
-
-          {selectedSeats.length > 0 ? (
-            <div className="flex items-center w-full gap-x-3">
-              {selectedSeats.map((seatId) => {
-                return (
-                  <div
-                    key={seatId}
-                    className="flex items-center justify-center text-base font-semibold rounded-lg w-9 h-9 bg-neutral-200/80 text-neutral-700 "
-                  >
-                    {data.seats.find(seat => seat._id === seatId).seatNumber}
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="flex items-center w-full gap-x-3">
-              <p className="text-sm font-normal text-neutral-500">
-                No seat selected
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className="w-full space-y-2">
-          <h1 className="text-lg font-medium text-neutral-600">
-            Fare Details
-          </h1>
-
-          <div className="flex items-center justify-between w-full border-dashed border-l-[1.5px] border-neutral-400 pl-2">
-            <h3 className="text-sm font-medium text-neutral-500">
-              Basic Fare:
-            </h3>
-            <p className="text-sm font-medium text-neutral-600"></p>
-          </div>
-
-          <div className="flex items-center justify-between gap-x-4">
-            <div className="flex gap-y-0.5 flex-col">
-              <h3 className="text-base font-medium text-neutral-500">
-                Total Price:
-              </h3>
-              <span className="text-xs font-normal text-neutral-500">
-                (Including all taxes)
-              </span>
-            </div>
-            {/* Calculate the total price */}
-            <p className="text-base font-semibold text-neutral-600">
-              Rs{" "}
-
-              {totalCost}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-center w-full">
-          {selectedSeats.length > 0 ? (
-            <Link
-              to={`/bus-tickets/checkout`} state={{ selectedSeats, totalCost, id, routeTo }}
-              className="w-full text-sm font-normal bg-primary hover:bg-primary/90 text-neutral-50 py-2.5 flex items-center justify-center uppercase rounded-lg transition"
-            >
-              Processed to CheckOut
-            </Link>
-          ) : (
-            <div className="w-full space-y-0.5">
-              <button
-                disabled
-                className="w-full text-sm font-normal bg-primary hover:bg-primary/90 text-neutral-50 py-2.5 flex items-center justify-center uppercase rounded-lg transition cursor-not-allowed"
-              >
-                Processed to CheckOut
-              </button>
-              <small className="px-1 text-xs font-normal text-neutral-600">
-                Please select at least one seat to proceed to checkout page.
-              </small>
-            </div>
-          )}
-        </div>
+  
+      {/* Seat Selection Component - takes full width on mobile, 40% on desktop */}
+      <div className="w-full lg:w-2/5 self-start sticky top-20">
+        <SeatSelection 
+          data={data}
+          selectedSeats={selectedSeats}
+          totalCost={totalCost}
+          id={id}
+          routeTo={routeTo}
+          matchingCity={matchingCity}
+          getTravelTime={getTravelTime}
+          getStopsCount={getStopsCount}
+        />
       </div>
-      {/* Show the error message if more than 10 seats are selected */}
+      
+      {showError && (
+        <div className="fixed bottom-5 right-5 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md flex items-center">
+          <span className="mr-2">⚠️</span>
+          <span>You cannot select more than 10 seats.</span>
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default BusSeat
+export default BusSeat;

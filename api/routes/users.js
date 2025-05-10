@@ -28,5 +28,4 @@ router.delete("/:id", deleteUser);
 router.get("/:id", verifyUser, getUser);
 router.get("/mobile/:id", getUser);
 router.get("/", getAllUsers);
-router.delete("/:id", deleteUser);
 export default router;

@@ -2,9 +2,10 @@ import React, { useState, useEffect, useContext } from "react";
 import { RxCross2 } from "react-icons/rx";
 import { AuthContext } from "../../Context/AuthContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from 'react-toastify';
-import './LoginPopup.css';
+import { useNavigate, useLocation } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "./LoginPopup.css";
+import "react-toastify/dist/ReactToastify.css";
 
 const LoginPopup = ({ setShowLogin }) => {
   const [currState, setCurrState] = useState("Login");
@@ -26,6 +27,7 @@ const LoginPopup = ({ setShowLogin }) => {
   });
 
   const navigate = useNavigate();
+  const location = useLocation(); // Get current location
   const { user, loading, error, dispatch } = useContext(AuthContext);
 
   // Handle input changes
@@ -34,7 +36,7 @@ const LoginPopup = ({ setShowLogin }) => {
     setCredentials((prev) => ({ ...prev, [id]: value }));
 
     // Reset the specific error for the input field being edited
-  setErrors((prev) => ({ ...prev, [id]: "" }));
+    setErrors((prev) => ({ ...prev, [id]: "" }));
 
     if (id === "password") {
       updatePasswordStrength(value);
@@ -108,7 +110,7 @@ const LoginPopup = ({ setShowLogin }) => {
   // Handle login or register click
   const handleClick = async (e) => {
     e.preventDefault();
-  
+
     if (currState === "Sign Up") {
       // Validate required fields for registration
       if (
@@ -117,23 +119,23 @@ const LoginPopup = ({ setShowLogin }) => {
         !credentials.mobile ||
         !credentials.password
       ) {
-        alert("Please fill in all the fields.");
+        toast.error("Please fill in all the fields.");
         return; // Exit the function
       }
-  
+
       // Check for terms of use agreement
       const termsCheckbox = document.querySelector('input[type="checkbox"]');
       if (!termsCheckbox.checked) {
-        alert("Please agree to the terms of use & privacy policy.");
+        toast.warning("Please agree to the terms of use & privacy policy.");
         return;
       }
-  
+
       // Check if the password is strong enough
       if (passwordStrength.level === "Weak") {
-        alert("Please choose a stronger password.");
+        toast.warning("Please choose a stronger password.");
         return;
       }
-  
+
       try {
         // API call to check uniqueness of fields
         const uniqueRes = await axios.post("/auth/check-uniqueness", {
@@ -143,7 +145,7 @@ const LoginPopup = ({ setShowLogin }) => {
         });
 
         console.log("Response from server:", uniqueRes.data);
-  
+
         // If there are uniqueness errors from the server, set them in the state
         if (uniqueRes.data.errors) {
           setErrors((prev) => ({
@@ -154,7 +156,7 @@ const LoginPopup = ({ setShowLogin }) => {
           }));
           return; // Don't proceed with registration if any field is not unique
         }
-  
+
         // Proceed with registration if fields are unique
         await axios.post("/auth/register", {
           userName: credentials.userName,
@@ -162,8 +164,8 @@ const LoginPopup = ({ setShowLogin }) => {
           mobile: credentials.mobile,
           password: credentials.password,
         });
-  
-        alert("Registration successful! Please log in.");
+
+        toast.success("Registration successful! Please log in.");
         setCurrState("Login");
       } catch (err) {
         if (err.response && err.response.status === 409) {
@@ -177,7 +179,7 @@ const LoginPopup = ({ setShowLogin }) => {
           }));
         } else {
           console.error("Registration error:", err);
-          alert("Registration failed. Please try again.");
+          toast.error("Registration failed. Please try again.");
         }
       }
     } else if (currState === "Login") {
@@ -203,26 +205,39 @@ const LoginPopup = ({ setShowLogin }) => {
         // Dispatch user data to AuthContext
         dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
 
-        alert("Login successful!");
-        setShowLogin(false);
-        navigate("/");
+        toast.success("Login successful!");
+
+        // Add a small delay before closing the popup
+        // but don't navigate away from current page
+        setTimeout(() => {
+          setShowLogin(false);
+          // No navigation - stay on current page
+        }, 1000); // 1-second delay
       } catch (err) {
         dispatch({ type: "LOGIN_FAILURE", payload: err.response?.data });
-        
+
         // Handle specific error messages
         if (err.response?.status === 401) {
           // Unauthorized: invalid credentials
-          const errorMessage = err.response.data?.message || "Invalid credentials.";
+          const errorMessage =
+            err.response.data?.message || "Invalid credentials.";
           if (errorMessage.includes("username")) {
             setErrors((prev) => ({ ...prev, userName: "Invalid username." }));
+            toast.error("Invalid username.");
           } else if (errorMessage.includes("password")) {
             setErrors((prev) => ({ ...prev, password: "Incorrect password." }));
+            toast.error("Incorrect password.");
           } else {
-            setErrors((prev) => ({ ...prev, userName: "", password: errorMessage }));
+            setErrors((prev) => ({
+              ...prev,
+              userName: "",
+              password: errorMessage,
+            }));
+            toast.error(errorMessage);
           }
         } else {
           console.error("Login error:", err);
-          alert("Something went wrong. Please try again later.");
+          toast.error("Something went wrong. Please try again later.");
         }
       }
     }
@@ -236,11 +251,21 @@ const LoginPopup = ({ setShowLogin }) => {
     };
   }, []);
 
-  
-
   return (
     <div className="absolute z-10 grid w-full h-full bg-black/60">
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        style={{ zIndex: 9999 }} // Add a high z-index
+      />
       <form className="place-self-center max-w-[23vw] sm:max-w-[330px] text-gray-500 bg-white flex flex-col gap-6 p-8 rounded-lg text-sm animate-fadeIn">
         <div className="flex items-center justify-between text-black">
           <h1 className="text-xl font-bold">{currState}</h1>

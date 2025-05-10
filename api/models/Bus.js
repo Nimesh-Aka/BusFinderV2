@@ -60,6 +60,13 @@ const busSchema = new mongoose.Schema({
   recommends: {
     type: Number, // Number of recommendations
   },
+   // Add passenger message field
+   passengersMessage: {
+    type: String,
+    trim: true,
+    maxlength: [5000, 'Passenger message cannot exceed 500 characters'],
+    default: '' // Default to empty string
+  },
   busCitiesAndTimes: {
     type: [cityTimeSchema], // Array of cities and arrival times
     validate: [arrayLimit, "{PATH} exceeds the limit of 50"], // Limit to 50 cities
