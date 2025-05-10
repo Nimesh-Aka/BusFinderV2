@@ -15,7 +15,8 @@ import {
   getTotalCostData,
   getAllBusesAdmin,
   getBookingUsers,
-  getDailyRevenue
+  getDailyRevenue,
+  getAllBookings
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -67,6 +68,8 @@ router.get("/bookings/users", getBookingUsers);
 
 // Get daily revenue reports
 router.get("/reports/daily", getDailyRevenue);
+
+router.get("/analytics", getAllBookings);
 
 
 

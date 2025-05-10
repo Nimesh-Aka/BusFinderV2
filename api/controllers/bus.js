@@ -642,6 +642,47 @@ export const getBookingUsers = async (req, res, next) => {
 };
 
 
+//route that include bookings
+// Get all bookings with full details
+export const getAllBookings = async (req, res, next) => {
+  try {
+    // Get optional query parameters for filtering
+    const { paymentStatus, startDate, endDate } = req.query;
+    
+    // Build query object
+    const query = {};
+    
+    // Add payment status filter if provided
+    if (paymentStatus) {
+      query.paymentStatus = paymentStatus;
+    }
+    
+    // Add date range filter if provided
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) query.createdAt.$gte = new Date(startDate);
+      if (endDate) query.createdAt.$lte = new Date(endDate);
+    }
+    
+    // Fetch all bookings with populated data
+    const bookings = await Booking.find(query)
+      .populate({
+        path: "busId",
+        select: "busName busType busPlateNo busTicketPrice busDepartureDate busCitiesAndTimes"
+      })
+      .populate({
+        path: "userId",
+        select: "userName email name"
+      })
+      .sort({ createdAt: -1 }); // Most recent first
+      
+    res.status(200).json(bookings);
+  } catch (err) {
+    console.error("Error fetching all bookings:", err);
+    next(err);
+  }
+};
+
 
 
 
