@@ -9,7 +9,6 @@ import {
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useTheme } from "@/hooks/use-theme";
-import { overviewData, recentSalesData, topProducts } from "@/constants";
 import { Footer } from "@/layouts/footer";
 import {
   CreditCard,
@@ -20,7 +19,10 @@ import {
   Trash,
   TrendingUp,
   Users,
+  Eye,
 } from "lucide-react";
+import { format } from "date-fns";
+import { Link } from "react-router-dom";
 
 const DAILY_REVENUE_URL = "http://localhost:8000/api/buses/reports/daily";
 const TRANSACTIONS_URL = "http://localhost:8000/api/buses/bookings/users";
@@ -38,6 +40,7 @@ const DashboardPage = () => {
   const { theme } = useTheme();
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [dailyRevenue, setDailyRevenue] = useState([]);
+  const [topBuses, setTopBuses] = useState([]);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-LK", {
@@ -97,7 +100,7 @@ const DashboardPage = () => {
     fetchTotalRevenue();
   }, []);
 
-  // Fetch buses data
+  // Fetch buses data and prepare top buses
   useEffect(() => {
     const fetchBuses = async () => {
       setLoading(true);
@@ -106,6 +109,7 @@ const DashboardPage = () => {
         const allBuses = response.data;
         setBuses(allBuses);
 
+        // Set today's buses
         const todayDate = new Date().toISOString().split("T")[0];
         const filteredToday = allBuses.filter((bus) => {
           const departureDate = new Date(bus.busDepartureDate)
@@ -114,6 +118,17 @@ const DashboardPage = () => {
           return departureDate === todayDate;
         });
         setTodayBuses(filteredToday.length);
+
+        // Prepare top buses based on ticket price (could be improved with booking data)
+        const sortedBuses = [...allBuses].sort((a, b) => {
+          // Sort by recommendations if available, otherwise by price
+          if (a.recommends && b.recommends) {
+            return b.recommends - a.recommends;
+          }
+          return b.busTicketPrice - a.busTicketPrice;
+        }).slice(0, 5);
+        
+        setTopBuses(sortedBuses);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch buses");
       } finally {
@@ -168,7 +183,7 @@ const DashboardPage = () => {
             <div className="p-2 text-red-500 transition-colors rounded-lg bg-red-500/20 dark:bg-red-600/20 dark:text-red-600">
               <DollarSign size={26} />
             </div>
-            <p className="card-title">Total Paid Sheets</p>
+            <p className="card-title">Total Revenue</p>
           </div>
           <div className="transition-colors card-body bg-slate-100 dark:bg-slate-950">
             <p className="text-3xl font-bold transition-colors text-slate-900 dark:text-slate-50">
@@ -307,7 +322,7 @@ const DashboardPage = () => {
         </div>
       </div>
 
-      {/* Top Buses Table */}
+      {/* Top Buses Table - Improved version */}
       <div className="card">
         <div className="card-header">
           <p className="card-title">Top Buses</p>
@@ -318,52 +333,69 @@ const DashboardPage = () => {
               <thead className="table-header">
                 <tr className="table-row">
                   <th className="table-head">#</th>
-                  <th className="table-head">Buses</th>
-                  <th className="table-head">Price</th>
-                  <th className="table-head">Status</th>
-                  <th className="table-head">Rating</th>
+                  <th className="table-head">Bus Information</th>
+                  <th className="table-head">Route</th>
+                  <th className="table-head">Departure Date</th>
+                  <th className="table-head">Ticket Price</th>
+                  <th className="table-head">Popularity</th>
                   <th className="table-head">Actions</th>
                 </tr>
               </thead>
               <tbody className="table-body">
-                {topProducts.map((product) => (
-                  <tr key={product.number} className="table-row">
-                    <td className="table-cell">{product.number}</td>
-                    <td className="table-cell">
-                      <div className="flex w-max gap-x-4">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="object-cover rounded-lg size-14"
-                        />
+                {topBuses.length > 0 ? (
+                  topBuses.map((bus, index) => (
+                    <tr key={bus._id} className="table-row">
+                      <td className="table-cell">{index + 1}</td>
+                      <td className="table-cell">
                         <div className="flex flex-col">
-                          <p>{product.name}</p>
-                          <p className="font-normal text-slate-600 dark:text-slate-400">
-                            {product.description}
+                          <p className="font-medium">{bus.busName}</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                            {bus.busPlateNo} • {bus.busType}
+                          </p>
+                          <p className="text-xs text-slate-500">
+                            {bus.busOwnership === 'CTB' ? 'Government' : 'Private'}
                           </p>
                         </div>
-                      </div>
-                    </td>
-                    <td className="table-cell">${product.price}</td>
-                    <td className="table-cell">{product.status}</td>
-                    <td className="table-cell">
-                      <div className="flex items-center gap-x-2">
-                        <Star size={18} className="fill-yellow-600 stroke-yellow-600" />
-                        {product.rating}
-                      </div>
-                    </td>
-                    <td className="table-cell">
-                      <div className="flex items-center gap-x-4">
-                        <button className="text-red-500 dark:text-red-600">
-                          <PencilLine size={20} />
-                        </button>
-                        <button className="text-red-500">
-                          <Trash size={20} />
-                        </button>
-                      </div>
+                      </td>
+                      <td className="table-cell">
+                        {bus.busCitiesAndTimes && bus.busCitiesAndTimes.length > 0 ? (
+                          <span>
+                            {bus.busCitiesAndTimes[0].cityName} → {' '}
+                            {bus.busCitiesAndTimes[bus.busCitiesAndTimes.length - 1].cityName}
+                          </span>
+                        ) : 'No route information'}
+                      </td>
+                      <td className="table-cell">
+                        {bus.busDepartureDate ? format(new Date(bus.busDepartureDate), 'dd MMM yyyy') : 'No date'}
+                      </td>
+                      <td className="table-cell font-medium">
+                        {formatCurrency(bus.busTicketPrice)}
+                      </td>
+                      <td className="table-cell">
+                        <div className="flex items-center gap-x-2">
+                          <Star size={18} className={`${bus.recommends > 0 ? 'fill-yellow-600 stroke-yellow-600' : 'text-gray-400'}`} />
+                          {bus.recommends || 0}
+                        </div>
+                      </td>
+                      <td className="table-cell">
+                        <div className="flex items-center gap-x-4">
+                          <Link to={`/buses/edit/${bus._id}`} className="text-blue-500 hover:text-blue-700">
+                            <PencilLine size={20} />
+                          </Link>
+                          <Link to={`/buses/view/${bus._id}`} className="text-green-500 hover:text-green-700">
+                            <Eye size={20} />
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="table-cell text-center py-4 text-slate-500">
+                      {loading ? "Loading buses..." : "No buses available"}
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
