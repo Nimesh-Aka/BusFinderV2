@@ -730,3 +730,33 @@ export const getDailyRevenue = async (req, res, next) => {
   }
 };
 
+// Get all bookings for a specific user
+export const getUserBookings = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    
+    // Validate userId format
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid user ID format" });
+    }
+    
+    const bookings = await Booking.find({ userId })
+      .sort({ createdAt: -1 }) // Sort by creation date descending (newest first)
+      .populate({
+        path: "busId",
+        select: "busName busType busPlateNo busDepartureDate busCitiesAndTimes"
+      })
+      .lean();
+
+    // If no bookings found, return empty array
+    if (!bookings || bookings.length === 0) {
+      return res.status(200).json([]);
+    }
+    
+    res.status(200).json(bookings);
+  } catch (err) {
+    console.error("Error fetching user bookings:", err);
+    next(err);
+  }
+};
+

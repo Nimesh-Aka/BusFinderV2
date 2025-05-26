@@ -3,7 +3,6 @@ import BusImg from "../../../../assets/bus.png";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoCloseCircle } from "react-icons/io5";
 import { FaPhone } from "react-icons/fa";
-import QrImg from "../../../../assets/qrcode.jpg";
 import { format } from 'date-fns';
 
 const PassengerInvoice = ({ bookingData }) => {
@@ -47,47 +46,41 @@ const PassengerInvoice = ({ bookingData }) => {
   const formattedBookingDate = format(new Date(createdAt), 'yyyy-MM-dd');
   const formattedDepartureDate = format(new Date(bus.busDepartureDate), 'yyyy-MM-dd');
   
+  // Extract departure time
+  let departureTime = "N/A";
 
-
-  // Replace your existing departure time extraction code with this enhanced version:
-
-let departureTime = "N/A";
-
-if (bus.busCitiesAndTimes && bus.busCitiesAndTimes.length > 0) {
-  const firstCity = bus.busCitiesAndTimes[0];
-  console.log("First city data:", firstCity);
-  
-  // Try different possible property names for departure time
-  const possibleTimeProperties = ['departureTime', 'arrivalTime', 'time', 'departingTime'];
-  
-  for (const prop of possibleTimeProperties) {
-    if (firstCity[prop]) {
-      // Get the raw time
-      let rawTime = firstCity[prop];
-      console.log(`Found time in ${prop}:`, rawTime);
-      
-      // Check if time already has AM/PM
-      if (!rawTime.includes('AM') && !rawTime.includes('PM')) {
-        // Try to parse the time assuming it's in 24-hour format (HH:MM)
-        const timeMatch = rawTime.match(/^(\d{1,2}):(\d{2})$/);
-        if (timeMatch) {
-          const hours = parseInt(timeMatch[1], 10);
-          const minutes = timeMatch[2];
-          const period = hours >= 12 ? 'PM' : 'AM';
-          const hours12 = hours % 12 || 12; // Convert 0 to 12
-          rawTime = `${hours12}:${minutes} ${period}`;
+  if (bus.busCitiesAndTimes && bus.busCitiesAndTimes.length > 0) {
+    const firstCity = bus.busCitiesAndTimes[0];
+    console.log("First city data:", firstCity);
+    
+    // Try different possible property names for departure time
+    const possibleTimeProperties = ['departureTime', 'arrivalTime', 'time', 'departingTime'];
+    
+    for (const prop of possibleTimeProperties) {
+      if (firstCity[prop]) {
+        // Get the raw time
+        let rawTime = firstCity[prop];
+        console.log(`Found time in ${prop}:`, rawTime);
+        
+        // Check if time already has AM/PM
+        if (!rawTime.includes('AM') && !rawTime.includes('PM')) {
+          // Try to parse the time assuming it's in 24-hour format (HH:MM)
+          const timeMatch = rawTime.match(/^(\d{1,2}):(\d{2})$/);
+          if (timeMatch) {
+            const hours = parseInt(timeMatch[1], 10);
+            const minutes = timeMatch[2];
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const hours12 = hours % 12 || 12; // Convert 0 to 12
+            rawTime = `${hours12}:${minutes} ${period}`;
+          }
         }
+        
+        departureTime = rawTime;
+        break;
       }
-      
-      departureTime = rawTime;
-      break;
     }
   }
-}
 
-// Log the final formatted departure time
-console.log("Final formatted departure time:", departureTime);
-  
   // Calculate per seat cost
   const perSeatCost = Math.round(totalCost / selectedSeats.length);
 
@@ -109,8 +102,8 @@ console.log("Final formatted departure time:", departureTime);
         </div>
       </div>
 
-      <div className="w-full grid grid-cols-5 gap-8 items-center px-5 py-6 mb-7">
-        <div className="col-span-4 space-y-3.5">
+      <div className="w-full px-5 py-6 mb-7">
+        <div className="space-y-3.5">
           {/* Bill no, per seat, and date */}
           <div className="w-full flex items-center justify-between border-dashed border-b-2 border-neutral-200 pb-3">
             <p className="text-base text-neutral-500 font-normal">Bill No: {_id.substring(0, 6)}</p>
@@ -125,7 +118,7 @@ console.log("Final formatted departure time:", departureTime);
                 Name of Passenger: <span className="font-medium">{userName}</span>
               </p>
               <p className="text-base text-neutral-500 font-normal">
-                Total Seat No.: <span className="font-medium">{seatNumbers.join(', ')}</span>
+                Total Seat No: <span className="font-medium">{seatNumbers.join(', ')}</span>
               </p>
               <p className="text-base text-neutral-500 font-normal">
                 Pickup Stand: <span className="font-medium">{departureCity}</span>
@@ -133,7 +126,6 @@ console.log("Final formatted departure time:", departureTime);
               <p className="text-base text-neutral-500 font-normal">
                 Total No. of Passenger: <span className="font-medium">{selectedSeats.length} Only</span>
               </p>
-              
             </div>
 
             <div className="space-y-4 flex items-center justify-center flex-col">
@@ -165,8 +157,7 @@ console.log("Final formatted departure time:", departureTime);
               {routeTo}
             </p>
             <p className="text-base text-neutral-600 font-normal">
-            Departure at: <span className="font-medium">{departureTime}</span>
-            
+              Departure at: <span className="font-medium">{departureTime}</span>
             </p>
             <div className="px-3 py-1 bg-yellow-50 border border-yellow-300 rounded-md">
               <p className="text-xs text-yellow-700 font-medium">
@@ -174,11 +165,6 @@ console.log("Final formatted departure time:", departureTime);
               </p>
             </div>
           </div>
-        </div>
-
-        <div className="col-span-1 border border-neutral-200 rounded-xl shadow-sm p-1">
-          <img src={QrImg} alt="Qr Img" className="w-full aspect-square
-          object-cover object-center rounded-xl" />
         </div>
       </div>
 
@@ -192,7 +178,7 @@ console.log("Final formatted departure time:", departureTime);
         <div className="flex items-center gap-x-2">
           <FaPhone className="w-3 h-3 text-neutral-100" />
           <p className="text-xm text-neutral-100 font-light">
-          077-6697324, 041-2223524
+            077-6697324, 041-2223524
           </p>
         </div>
       </div>

@@ -18,7 +18,7 @@ const Navbar = ({ setShowLogin }) => {
   const navItems = [
     { label: "Home", link: "/" },
     { label: "Services", link: "/services" },
-    { label: "Tickets", link: "/bus-tickets" },
+    { label: "Tickets", link: "/tickets/:bookingId" },
     { label: "About", link: "/about" },
   ];
 

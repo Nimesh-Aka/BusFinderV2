@@ -16,7 +16,8 @@ import {
   getAllBusesAdmin,
   getBookingUsers,
   getDailyRevenue,
-  getAllBookings
+  getAllBookings,
+  getUserBookings
 } from "../controllers/bus.js";
 import { verifyAdmin } from "../utils/verifyToken.js";
 
@@ -70,6 +71,13 @@ router.get("/bookings/users", getBookingUsers);
 router.get("/reports/daily", getDailyRevenue);
 
 router.get("/analytics", getAllBookings);
+
+//
+// Add this new route - place it BEFORE the session_id route to avoid route conflicts
+
+
+// Add this to your routes file
+router.get("/bookings/user/:userId", getUserBookings);
 
 
 
